@@ -58,10 +58,10 @@ function isIncident(x: unknown): x is Incident {
   if (!x || typeof x !== "object") return false;
   const o = x as Record<string, unknown>;
   return (
-    typeof o.id === "string" &&
-    typeof o.timestamp === "string" &&
-    typeof o.classification === "string" &&
-    typeof o.observation === "string"
+    typeof o["id"] === "string" &&
+    typeof o["timestamp"] === "string" &&
+    typeof o["classification"] === "string" &&
+    typeof o["observation"] === "string"
   );
 }
 

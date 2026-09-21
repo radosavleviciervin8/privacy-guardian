@@ -85,7 +85,7 @@ function Index() {
       id: newId(),
       timestamp: nowISO(),
       attribution: ATTRIBUTION,
-      classification,
+      classification: classification ?? CLASSIFICATIONS[0]!,
       observation: obs,
       technical: technical.trim(),
       categories,
