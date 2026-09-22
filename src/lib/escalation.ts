@@ -27,7 +27,8 @@ export interface EscalationRule {
 }
 
 export interface EscalationAction {
-  type: "notify" | "alert" | "report" | "archive" | "quarantine" | "legal_review" | "authority_contact";
+  type:
+    "notify" | "alert" | "report" | "archive" | "quarantine" | "legal_review" | "authority_contact";
   target: string; // user, role, email, api endpoint, etc.
   method: "in_app" | "email" | "sms" | "api" | "manual";
   template?: string;
@@ -631,8 +632,11 @@ export class EscalationManager {
     this.saveToStorage();
 
     // Log audit event
-    logAudit("ESCALATE", level === "critical" ? "CRITICAL" : level === "high" ? "WARNING" : "INFO",
-      `Escalation created: ${escalation.id} for incident ${incident.id}`);
+    logAudit(
+      "ESCALATE",
+      level === "critical" ? "CRITICAL" : level === "high" ? "WARNING" : "INFO",
+      `Escalation created: ${escalation.id} for incident ${incident.id}`,
+    );
 
     // Auto-escalate if configured
     if (this.config.autoEscalate) {
@@ -702,7 +706,7 @@ export class EscalationManager {
   private generateReport(action: EscalationAction, escalation: Escalation): boolean {
     // Generate report content
     const content = this.generateActionContent(action, escalation);
-    
+
     // In a real implementation, this would generate and store a report
     // For now, just log it
     logAudit("REPORT_GENERATED", "INFO", `Report generated for escalation: ${escalation.id}`);
@@ -713,7 +717,11 @@ export class EscalationManager {
   private archiveIncident(escalation: Escalation): boolean {
     // In a real implementation, this would archive the incident
     // For now, just log it
-    logAudit("ARCHIVE_ESCALATION", "INFO", `Incident archived via escalation: ${escalation.incidentId}`);
+    logAudit(
+      "ARCHIVE_ESCALATION",
+      "INFO",
+      `Incident archived via escalation: ${escalation.incidentId}`,
+    );
     return true;
   }
 
@@ -721,7 +729,11 @@ export class EscalationManager {
   private quarantineIncident(escalation: Escalation): boolean {
     // In a real implementation, this would quarantine the incident
     // For now, just log it
-    logAudit("QUARANTINE_ESCALATION", "WARNING", `Incident quarantined via escalation: ${escalation.incidentId}`);
+    logAudit(
+      "QUARANTINE_ESCALATION",
+      "WARNING",
+      `Incident quarantined via escalation: ${escalation.incidentId}`,
+    );
     return true;
   }
 
@@ -729,7 +741,11 @@ export class EscalationManager {
   private requestLegalReview(escalation: Escalation): boolean {
     // In a real implementation, this would create a legal review request
     // For now, just log it
-    logAudit("LEGAL_REVIEW_REQUESTED", "INFO", `Legal review requested for escalation: ${escalation.id}`);
+    logAudit(
+      "LEGAL_REVIEW_REQUESTED",
+      "INFO",
+      `Legal review requested for escalation: ${escalation.id}`,
+    );
     return true;
   }
 
@@ -737,7 +753,11 @@ export class EscalationManager {
   private contactAuthority(escalation: Escalation): boolean {
     // In a real implementation, this would contact authorities
     // For now, just log it
-    logAudit("AUTHORITY_CONTACT", "CRITICAL", `Authority contact initiated for escalation: ${escalation.id}`);
+    logAudit(
+      "AUTHORITY_CONTACT",
+      "CRITICAL",
+      `Authority contact initiated for escalation: ${escalation.id}`,
+    );
     return true;
   }
 
@@ -755,8 +775,9 @@ export class EscalationManager {
 
   // Get all escalations
   getAllEscalations(): Escalation[] {
-    return Array.from(this.escalations.values())
-      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    return Array.from(this.escalations.values()).sort(
+      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+    );
   }
 
   // Get escalations by status
@@ -825,8 +846,9 @@ export class EscalationManager {
 
   // Get notifications
   getNotifications(): { id: string; timestamp: string; read: boolean; content: string }[] {
-    return Array.from(this.notifications.values())
-      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    return Array.from(this.notifications.values()).sort(
+      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+    );
   }
 
   // Get unread notifications
@@ -941,8 +963,8 @@ export class EscalationManager {
 
   // Private methods
   private generateEscalationId(): string {
-    return typeof crypto?.randomUUID === "function" 
-      ? crypto.randomUUID() 
+    return typeof crypto?.randomUUID === "function"
+      ? crypto.randomUUID()
       : `escalation-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   }
 
@@ -970,16 +992,16 @@ export class EscalationManager {
 
     // Check anomaly types
     if (rule.conditions.anomalyTypes && anomalies) {
-      const matchingAnomalyTypes = anomalies.filter((a) => 
-        rule.conditions.anomalyTypes!.includes(a.anomalyType)
+      const matchingAnomalyTypes = anomalies.filter((a) =>
+        rule.conditions.anomalyTypes!.includes(a.anomalyType),
       );
       if (matchingAnomalyTypes.length === 0) return false;
     }
 
     // Check threat levels
     if (rule.conditions.threatLevels && threatReports) {
-      const matchingThreatLevels = threatReports.filter((r) => 
-        rule.conditions.threatLevels!.includes(r.threatLevel as EscalationLevel)
+      const matchingThreatLevels = threatReports.filter((r) =>
+        rule.conditions.threatLevels!.includes(r.threatLevel as EscalationLevel),
       );
       if (matchingThreatLevels.length === 0) return false;
     }
@@ -987,15 +1009,18 @@ export class EscalationManager {
     // Check anomaly score
     if (rule.conditions.anomalyScore && anomalies) {
       const maxScore = Math.max(...anomalies.map((a) => a.anomalyScore));
-      if (rule.conditions.anomalyScore.min && maxScore < rule.conditions.anomalyScore.min) return false;
-      if (rule.conditions.anomalyScore.max && maxScore > rule.conditions.anomalyScore.max) return false;
+      if (rule.conditions.anomalyScore.min && maxScore < rule.conditions.anomalyScore.min)
+        return false;
+      if (rule.conditions.anomalyScore.max && maxScore > rule.conditions.anomalyScore.max)
+        return false;
     }
 
     // Check keywords
     if (rule.conditions.keywords) {
-      const text = `${incident.observation} ${incident.technical} ${incident.classification}`.toLowerCase();
-      const matchingKeywords = rule.conditions.keywords.filter((kw) => 
-        text.includes(kw.toLowerCase())
+      const text =
+        `${incident.observation} ${incident.technical} ${incident.classification}`.toLowerCase();
+      const matchingKeywords = rule.conditions.keywords.filter((kw) =>
+        text.includes(kw.toLowerCase()),
       );
       if (matchingKeywords.length === 0) return false;
     }
@@ -1052,7 +1077,9 @@ export class EscalationManager {
 
     // Add anomalies
     if (anomalies.length > 0) {
-      const anomaliesText = anomalies.map((a) => `  - ${a.anomalyType}: ${a.description}`).join("\n");
+      const anomaliesText = anomalies
+        .map((a) => `  - ${a.anomalyType}: ${a.description}`)
+        .join("\n");
       content = content.replace(/\{anomalies\}/g, anomaliesText);
     }
 
@@ -1102,11 +1129,11 @@ export class EscalationManager {
       if (typeof localStorage !== "undefined") {
         localStorage.setItem(
           "sentinel_escalations",
-          JSON.stringify(Array.from(this.escalations.values()))
+          JSON.stringify(Array.from(this.escalations.values())),
         );
         localStorage.setItem(
           "sentinel_escalation_notifications",
-          JSON.stringify(Array.from(this.notifications.values()))
+          JSON.stringify(Array.from(this.notifications.values())),
         );
       }
     } catch {
@@ -1137,7 +1164,7 @@ export function checkAndEscalate(
   const { shouldEscalate, rules, level } = escalationManager.checkEscalation(
     incident,
     anomalies,
-    threatReports
+    threatReports,
   );
 
   if (shouldEscalate && rules.length > 0) {
@@ -1147,7 +1174,7 @@ export function checkAndEscalate(
       rules.map((r) => r.id),
       level,
       anomalies,
-      threatReports
+      threatReports,
     );
     return { shouldEscalate: true, escalation };
   }

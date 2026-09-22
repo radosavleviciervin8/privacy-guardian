@@ -69,7 +69,12 @@ export interface LocationHistory {
 }
 
 // Known IP ranges and their associated risks
-const KNOWN_IP_RANGES: { range: [string, string]; country: string; risk: number; reason: string }[] = [
+const KNOWN_IP_RANGES: {
+  range: [string, string];
+  country: string;
+  risk: number;
+  reason: string;
+}[] = [
   // Cloud providers
   {
     range: ["1.0.0.0", "1.255.255.255"],
@@ -148,7 +153,10 @@ const KNOWN_IP_RANGES: { range: [string, string]; country: string; risk: number;
 ];
 
 // Country risk levels based on cybersecurity threat assessments
-const COUNTRY_RISK_LEVELS: Record<string, { level: "low" | "medium" | "high" | "critical"; score: number }> = {
+const COUNTRY_RISK_LEVELS: Record<
+  string,
+  { level: "low" | "medium" | "high" | "critical"; score: number }
+> = {
   // Low risk
   US: { level: "low", score: 10 },
   CA: { level: "low", score: 10 },
@@ -160,20 +168,20 @@ const COUNTRY_RISK_LEVELS: Record<string, { level: "low" | "medium" | "high" | "
   NO: { level: "low", score: 10 },
   SE: { level: "low", score: 10 },
   FI: { level: "low", score: 10 },
-  
+
   // Medium risk
   BR: { level: "medium", score: 40 },
   IN: { level: "medium", score: 40 },
   IT: { level: "medium", score: 40 },
   ES: { level: "medium", score: 40 },
   MX: { level: "medium", score: 40 },
-  
+
   // High risk
   RU: { level: "high", score: 70 },
   CN: { level: "high", score: 70 },
   IR: { level: "high", score: 70 },
   KP: { level: "high", score: 70 },
-  
+
   // Critical risk
   SY: { level: "critical", score: 90 },
   IQ: { level: "critical", score: 90 },
@@ -285,13 +293,15 @@ export class GeolocationEngine {
           geolocation.latitude,
           geolocation.longitude,
           expected.latitude,
-          expected.longitude
+          expected.longitude,
         );
 
         if (distance > expected.radius) {
           const distanceScore = Math.min(50, (distance - expected.radius) * 2);
           riskScore += distanceScore;
-          riskFactors.push(`Distance from expected location: ${Math.round(distance)}km (expected < ${expected.radius}km)`);
+          riskFactors.push(
+            `Distance from expected location: ${Math.round(distance)}km (expected < ${expected.radius}km)`,
+          );
         }
       }
     }
@@ -398,9 +408,7 @@ export class GeolocationEngine {
 
   // Remove expected location
   removeExpectedLocation(id: string): void {
-    this.config.expectedLocations = this.config.expectedLocations.filter(
-      (l) => l.id !== id
-    );
+    this.config.expectedLocations = this.config.expectedLocations.filter((l) => l.id !== id);
     this.saveConfig();
   }
 
@@ -434,21 +442,21 @@ export class GeolocationEngine {
 
   // Private methods
   private generateAnalysisId(): string {
-    return typeof crypto?.randomUUID === "function" 
-      ? crypto.randomUUID() 
+    return typeof crypto?.randomUUID === "function"
+      ? crypto.randomUUID()
       : `geo-analysis-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   }
 
   private generateHistoryId(): string {
-    return typeof crypto?.randomUUID === "function" 
-      ? crypto.randomUUID() 
+    return typeof crypto?.randomUUID === "function"
+      ? crypto.randomUUID()
       : `geo-history-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   }
 
   private simulateGeolocation(ip: string): GeolocationData {
     // Simulate geolocation based on IP patterns
     const parts = ip.split(".").map(Number);
-    
+
     // Generate deterministic location based on IP
     const seed = parts.reduce((sum, part) => sum + part, 0);
     const random = (seed % 100) / 100;
@@ -478,10 +486,13 @@ export class GeolocationEngine {
     for (const range of KNOWN_IP_RANGES) {
       if (this.isIPInRange(ip, range.range[0], range.range[1])) {
         country = range.country;
-        countryName = range.reason.includes("Tor") ? "Tor Network" : 
-                     range.reason.includes("VPN") ? "VPN Provider" :
-                     range.reason.includes("cloud") ? "Cloud Provider" :
-                     countryName;
+        countryName = range.reason.includes("Tor")
+          ? "Tor Network"
+          : range.reason.includes("VPN")
+            ? "VPN Provider"
+            : range.reason.includes("cloud")
+              ? "Cloud Provider"
+              : countryName;
         break;
       }
     }
@@ -499,12 +510,15 @@ export class GeolocationEngine {
       city: country === "US" ? "San Francisco" : country === "EU" ? "Paris" : "Tokyo",
       latitude,
       longitude,
-      timezone: country === "US" ? "America/Los_Angeles" : 
-               country === "EU" ? "Europe/Paris" : "Asia/Tokyo",
-      isp: countryName.includes("Tor") ? "Tor Project" :
-           countryName.includes("VPN") ? "VPN Provider" :
-           countryName.includes("cloud") ? "Cloud Provider" :
-           "Local ISP",
+      timezone:
+        country === "US" ? "America/Los_Angeles" : country === "EU" ? "Europe/Paris" : "Asia/Tokyo",
+      isp: countryName.includes("Tor")
+        ? "Tor Project"
+        : countryName.includes("VPN")
+          ? "VPN Provider"
+          : countryName.includes("cloud")
+            ? "Cloud Provider"
+            : "Local ISP",
       org: countryName,
       as: `AS${Math.floor(Math.random() * 100000)}`,
       asName: countryName,
@@ -528,12 +542,7 @@ export class GeolocationEngine {
     return (parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3];
   }
 
-  private calculateDistance(
-    lat1: number,
-    lon1: number,
-    lat2: number,
-    lon2: number,
-  ): number {
+  private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
     // Haversine formula
     const R = 6371; // Earth radius in km
     const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -569,14 +578,8 @@ export class GeolocationEngine {
   private saveToStorage(): void {
     try {
       if (typeof localStorage !== "undefined") {
-        localStorage.setItem(
-          "sentinel_geolocation_history",
-          JSON.stringify(this.locationHistory)
-        );
-        localStorage.setItem(
-          "sentinel_geolocation_config",
-          JSON.stringify(this.config)
-        );
+        localStorage.setItem("sentinel_geolocation_history", JSON.stringify(this.locationHistory));
+        localStorage.setItem("sentinel_geolocation_config", JSON.stringify(this.config));
       }
     } catch {
       // Storage full or other error
@@ -586,10 +589,7 @@ export class GeolocationEngine {
   private saveConfig(): void {
     try {
       if (typeof localStorage !== "undefined") {
-        localStorage.setItem(
-          "sentinel_geolocation_config",
-          JSON.stringify(this.config)
-        );
+        localStorage.setItem("sentinel_geolocation_config", JSON.stringify(this.config));
       }
     } catch {
       // Ignore

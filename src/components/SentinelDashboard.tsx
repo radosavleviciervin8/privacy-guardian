@@ -14,7 +14,11 @@ import {
 import { getEvidence, type Incident } from "@/lib/evidence";
 import { getAuditLogs, generateAuditReport, type AuditLog } from "@/lib/audit";
 import { SAFEGUARD_COUNT, SAFEGUARD_GROUPS } from "@/lib/safeguards";
-import { getLegalFrameworkSummary, generateComplianceReport, type ComplianceCheck } from "@/lib/legal";
+import {
+  getLegalFrameworkSummary,
+  generateComplianceReport,
+  type ComplianceCheck,
+} from "@/lib/legal";
 
 export interface DashboardStats {
   totalIncidents: number;
@@ -70,9 +74,11 @@ export function SentinelDashboard() {
   useEffect(() => {
     loadInitialData();
     startSignalMonitoring();
-    
+
     // Generate compliance report
-    const report = generateComplianceReport("NDA Multi-Signal Defensive Protection & Evidence Registry");
+    const report = generateComplianceReport(
+      "NDA Multi-Signal Defensive Protection & Evidence Registry",
+    );
     setComplianceChecks(report);
 
     return () => {
@@ -83,7 +89,7 @@ export function SentinelDashboard() {
   const loadInitialData = useCallback(async () => {
     const incidents = getEvidence();
     const auditLogs = getAuditLogs();
-    
+
     setAuditLogs(auditLogs);
     setStats((prev) => ({
       ...prev,
@@ -105,14 +111,14 @@ export function SentinelDashboard() {
 
   const runScan = useCallback(async () => {
     try {
-      const result = await runSentinelScan({ 
-        deepAnalysis: true, 
-        signalPatterns: signalPatterns 
+      const result = await runSentinelScan({
+        deepAnalysis: true,
+        signalPatterns: signalPatterns,
       });
-      
+
       setReport(result.report);
       setInterferenceLogs(result.interferenceLogs);
-      
+
       const incidents = result.incidents;
       const quarantined = incidents.filter((i) => i.classification.includes("[QUARANTINED]"));
       const verified = incidents.filter((i) => !i.classification.includes("[QUARANTINED]"));
@@ -175,20 +181,20 @@ export function SentinelDashboard() {
   // Calculate overall health score
   const getHealthScore = useCallback((): number => {
     if (!report) return 100;
-    
+
     let score = 100;
-    
+
     // Deduct for interference
     score -= report.interferenceScore * 0.5;
-    
+
     // Deduct for quarantined items
     score -= stats.quarantinedIncidents * 5;
-    
+
     // Deduct for high threat level
     if (report.threatLevel === "critical") score -= 20;
     else if (report.threatLevel === "high") score -= 10;
     else if (report.threatLevel === "medium") score -= 5;
-    
+
     return Math.max(0, Math.min(100, score));
   }, [report, stats]);
 
@@ -226,7 +232,10 @@ export function SentinelDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted-foreground">System Health</p>
-              <p className="text-3xl font-bold" style={{ color: getInterferenceScoreColor(100 - healthScore) }}>
+              <p
+                className="text-3xl font-bold"
+                style={{ color: getInterferenceScoreColor(100 - healthScore) }}
+              >
                 {healthScore.toFixed(0)}%
               </p>
             </div>
@@ -241,7 +250,8 @@ export function SentinelDashboard() {
             </div>
           </div>
           <p className="text-xs text-muted-foreground mt-2">
-            Threat Level: <span className={getThreatColor(report?.threatLevel || "none")}>
+            Threat Level:{" "}
+            <span className={getThreatColor(report?.threatLevel || "none")}>
               {report?.threatLevel?.toUpperCase() || "NONE"}
             </span>
           </p>
@@ -295,47 +305,51 @@ export function SentinelDashboard() {
           <div className="panel">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-bold">Recent Sentinel Activity</h3>
-              <button
-                className="text-sm btn-ghost"
-                onClick={() => runScan()}
-              >
+              <button className="text-sm btn-ghost" onClick={() => runScan()}>
                 Refresh
               </button>
             </div>
-            
+
             {report && report.lines.length > 0 ? (
               <div className="mt-4 space-y-2 max-h-60 overflow-auto">
-                {[...report.lines].reverse().slice(0, 10).map((line, index) => (
-                  <div
-                    key={index}
-                    className={`p-3 rounded-lg border ${line.level === "alert" || line.level === "critical" 
-                      ? "border-red-500 bg-red-500/10" 
-                      : line.level === "warn" 
-                        ? "border-yellow-500 bg-yellow-500/10" 
-                        : "border-border"}`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className={`font-bold ${line.level === "alert" || line.level === "critical" 
-                        ? "text-red-500" 
-                        : line.level === "warn" 
-                          ? "text-yellow-500" 
-                          : line.level === "ok" 
-                            ? "text-green-500" 
-                            : "text-blue-500"}`}>
-                        {line.level.toUpperCase()}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {formatTimestamp(line.at)}
-                      </span>
+                {[...report.lines]
+                  .reverse()
+                  .slice(0, 10)
+                  .map((line, index) => (
+                    <div
+                      key={index}
+                      className={`p-3 rounded-lg border ${
+                        line.level === "alert" || line.level === "critical"
+                          ? "border-red-500 bg-red-500/10"
+                          : line.level === "warn"
+                            ? "border-yellow-500 bg-yellow-500/10"
+                            : "border-border"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`font-bold ${
+                            line.level === "alert" || line.level === "critical"
+                              ? "text-red-500"
+                              : line.level === "warn"
+                                ? "text-yellow-500"
+                                : line.level === "ok"
+                                  ? "text-green-500"
+                                  : "text-blue-500"
+                          }`}
+                        >
+                          {line.level.toUpperCase()}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {formatTimestamp(line.at)}
+                        </span>
+                      </div>
+                      <p className="mt-1 text-sm">{line.message}</p>
+                      {line.category && (
+                        <span className="text-xs badge tone-muted mt-1">{line.category}</span>
+                      )}
                     </div>
-                    <p className="mt-1 text-sm">{line.message}</p>
-                    {line.category && (
-                      <span className="text-xs badge tone-muted mt-1">
-                        {line.category}
-                      </span>
-                    )}
-                  </div>
-                ))}
+                  ))}
               </div>
             ) : (
               <p className="text-sm text-muted-foreground mt-4">
@@ -348,39 +362,42 @@ export function SentinelDashboard() {
           <div className="panel">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-bold">Signal Patterns</h3>
-              <span className="text-xs badge tone-muted">
-                {signalPatterns.length} detected
-              </span>
+              <span className="text-xs badge tone-muted">{signalPatterns.length} detected</span>
             </div>
-            
+
             {signalPatterns.length > 0 ? (
               <div className="mt-4 space-y-2 max-h-40 overflow-auto">
-                {[...signalPatterns].reverse().slice(0, 5).map((pattern, index) => (
-                  <div
-                    key={index}
-                    className={`p-2 rounded border ${pattern.isSuspicious ? "border-red-500 bg-red-500/10" : "border-border"}`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <span className="font-medium text-sm">{pattern.type.toUpperCase()}</span>
-                        <span className={`ml-2 text-xs ${pattern.isSuspicious ? "text-red-500" : "text-muted-foreground"}`}>
-                          {pattern.isSuspicious ? "SUSPICIOUS" : "NORMAL"}
+                {[...signalPatterns]
+                  .reverse()
+                  .slice(0, 5)
+                  .map((pattern, index) => (
+                    <div
+                      key={index}
+                      className={`p-2 rounded border ${pattern.isSuspicious ? "border-red-500 bg-red-500/10" : "border-border"}`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <span className="font-medium text-sm">{pattern.type.toUpperCase()}</span>
+                          <span
+                            className={`ml-2 text-xs ${pattern.isSuspicious ? "text-red-500" : "text-muted-foreground"}`}
+                          >
+                            {pattern.isSuspicious ? "SUSPICIOUS" : "NORMAL"}
+                          </span>
+                        </div>
+                        <span className="text-xs text-muted-foreground">
+                          {pattern.strength.toFixed(1)} dBm
                         </span>
                       </div>
-                      <span className="text-xs text-muted-foreground">
-                        {pattern.strength.toFixed(1)} dBm
-                      </span>
-                    </div>
-                    <div className="flex gap-1 mt-1">
-                      <div className="h-1 bg-muted rounded-full flex-1">
-                        <div
-                          className={`h-full ${pattern.anomalyScore > 0.8 ? "bg-red-500" : pattern.anomalyScore > 0.5 ? "bg-yellow-500" : "bg-green-500"}`}
-                          style={{ width: `${pattern.anomalyScore * 100}%` }}
-                        />
+                      <div className="flex gap-1 mt-1">
+                        <div className="h-1 bg-muted rounded-full flex-1">
+                          <div
+                            className={`h-full ${pattern.anomalyScore > 0.8 ? "bg-red-500" : pattern.anomalyScore > 0.5 ? "bg-yellow-500" : "bg-green-500"}`}
+                            style={{ width: `${pattern.anomalyScore * 100}%` }}
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             ) : (
               <p className="text-sm text-muted-foreground mt-4">
@@ -396,47 +413,56 @@ export function SentinelDashboard() {
           <div className="panel">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-bold">Interference Logs</h3>
-              <span className="text-xs badge tone-muted">
-                {interferenceLogs.length} events
-              </span>
+              <span className="text-xs badge tone-muted">{interferenceLogs.length} events</span>
             </div>
-            
+
             {interferenceLogs.length > 0 ? (
               <div className="mt-4 space-y-2 max-h-60 overflow-auto">
-                {[...interferenceLogs].reverse().slice(0, 10).map((log, index) => (
-                  <div
-                    key={index}
-                    className={`p-3 rounded-lg border ${log.severity === "alert" || log.severity === "critical" 
-                      ? "border-red-500 bg-red-500/10" 
-                      : log.severity === "warn" 
-                        ? "border-yellow-500 bg-yellow-500/10" 
-                        : "border-border"}`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className={`font-bold text-sm ${log.severity === "alert" || log.severity === "critical" 
-                        ? "text-red-500" 
-                        : log.severity === "warn" 
-                          ? "text-yellow-500" 
-                          : "text-blue-500"}`}>
-                        {log.type}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {formatTimestamp(log.timestamp)}
-                      </span>
-                    </div>
-                    <p className="mt-1 text-sm">{log.description}</p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <span className={`text-xs ${log.corrected ? "text-green-500" : "text-muted-foreground"}`}>
-                        {log.corrected ? "✓ Corrected" : "⏳ Pending"}
-                      </span>
-                      {log.evidenceId && (
-                        <span className="text-xs badge tone-muted">
-                          ID: {log.evidenceId.slice(0, 8)}...
+                {[...interferenceLogs]
+                  .reverse()
+                  .slice(0, 10)
+                  .map((log, index) => (
+                    <div
+                      key={index}
+                      className={`p-3 rounded-lg border ${
+                        log.severity === "alert" || log.severity === "critical"
+                          ? "border-red-500 bg-red-500/10"
+                          : log.severity === "warn"
+                            ? "border-yellow-500 bg-yellow-500/10"
+                            : "border-border"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span
+                          className={`font-bold text-sm ${
+                            log.severity === "alert" || log.severity === "critical"
+                              ? "text-red-500"
+                              : log.severity === "warn"
+                                ? "text-yellow-500"
+                                : "text-blue-500"
+                          }`}
+                        >
+                          {log.type}
                         </span>
-                      )}
+                        <span className="text-xs text-muted-foreground">
+                          {formatTimestamp(log.timestamp)}
+                        </span>
+                      </div>
+                      <p className="mt-1 text-sm">{log.description}</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <span
+                          className={`text-xs ${log.corrected ? "text-green-500" : "text-muted-foreground"}`}
+                        >
+                          {log.corrected ? "✓ Corrected" : "⏳ Pending"}
+                        </span>
+                        {log.evidenceId && (
+                          <span className="text-xs badge tone-muted">
+                            ID: {log.evidenceId.slice(0, 8)}...
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             ) : (
               <p className="text-sm text-muted-foreground mt-4">
@@ -448,7 +474,7 @@ export function SentinelDashboard() {
           {/* Recommendations */}
           <div className="panel">
             <h3 className="text-lg font-bold">Recommendations</h3>
-            
+
             {report && report.recommendations.length > 0 ? (
               <ul className="mt-4 space-y-2">
                 {report.recommendations.map((rec, index) => (
@@ -471,14 +497,11 @@ export function SentinelDashboard() {
       <div className="panel">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-bold">International Legal Framework Compliance</h3>
-          <button
-            className="text-sm btn-ghost"
-            onClick={() => setShowLegal(!showLegal)}
-          >
+          <button className="text-sm btn-ghost" onClick={() => setShowLegal(!showLegal)}>
             {showLegal ? "Hide" : "Show Details"}
           </button>
         </div>
-        
+
         <div className="mt-4">
           <div className="grid gap-4 md:grid-cols-3">
             <div className="text-center">
@@ -531,14 +554,11 @@ export function SentinelDashboard() {
       <div className="panel">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-bold">Compliance Report</h3>
-          <button
-            className="text-sm btn-ghost"
-            onClick={() => setShowCompliance(!showCompliance)}
-          >
+          <button className="text-sm btn-ghost" onClick={() => setShowCompliance(!showCompliance)}>
             {showCompliance ? "Hide" : "Show Details"}
           </button>
         </div>
-        
+
         <div className="mt-4">
           <div className="grid gap-4 md:grid-cols-3">
             <div className="text-center">
@@ -554,9 +574,7 @@ export function SentinelDashboard() {
               <p className="text-sm text-muted-foreground">Non-Compliant</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold">
-                {complianceChecks.length}
-              </p>
+              <p className="text-2xl font-bold">{complianceChecks.length}</p>
               <p className="text-sm text-muted-foreground">Total Checks</p>
             </div>
           </div>
@@ -578,7 +596,7 @@ export function SentinelDashboard() {
                   <p className="text-sm mt-2">{check.evidence}</p>
                 </div>
               ))}
-              
+
               {complianceChecks.length > 5 && (
                 <p className="text-sm text-muted-foreground">
                   + {complianceChecks.length - 5} more checks
@@ -593,14 +611,11 @@ export function SentinelDashboard() {
       <div className="panel">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-bold">Audit Log</h3>
-          <button
-            className="text-sm btn-ghost"
-            onClick={() => setShowAudit(!showAudit)}
-          >
+          <button className="text-sm btn-ghost" onClick={() => setShowAudit(!showAudit)}>
             {showAudit ? "Hide" : "Show Details"}
           </button>
         </div>
-        
+
         <div className="mt-4">
           <p className="text-sm">
             <span className="font-medium">{auditLogs.length}</span> audit entries recorded
@@ -608,19 +623,24 @@ export function SentinelDashboard() {
 
           {showAudit && (
             <div className="mt-4 space-y-2 max-h-40 overflow-auto">
-              {[...auditLogs].reverse().slice(0, 10).map((log, index) => (
-                <div key={index} className="p-2 border rounded text-sm">
-                  <div className="flex items-center justify-between">
-                    <span className={`font-medium ${log.severity === "CRITICAL" ? "text-red-500" : log.severity === "ERROR" ? "text-orange-500" : log.severity === "WARNING" ? "text-yellow-500" : "text-green-500"}`}>
-                      {log.action}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {formatTimestamp(log.timestamp)}
-                    </span>
+              {[...auditLogs]
+                .reverse()
+                .slice(0, 10)
+                .map((log, index) => (
+                  <div key={index} className="p-2 border rounded text-sm">
+                    <div className="flex items-center justify-between">
+                      <span
+                        className={`font-medium ${log.severity === "CRITICAL" ? "text-red-500" : log.severity === "ERROR" ? "text-orange-500" : log.severity === "WARNING" ? "text-yellow-500" : "text-green-500"}`}
+                      >
+                        {log.action}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {formatTimestamp(log.timestamp)}
+                      </span>
+                    </div>
+                    <p className="text-muted-foreground">{log.description}</p>
                   </div>
-                  <p className="text-muted-foreground">{log.description}</p>
-                </div>
-              ))}
+                ))}
             </div>
           )}
         </div>
@@ -628,9 +648,7 @@ export function SentinelDashboard() {
 
       {/* Footer */}
       <div className="text-center text-xs text-muted-foreground pt-4 border-t">
-        <p>
-          Autonomous Sentinel System — © Ervin Remus Radosavlevici — Private License / NDA
-        </p>
+        <p>Autonomous Sentinel System — © Ervin Remus Radosavlevici — Private License / NDA</p>
         <p className="mt-1">
           Continuous monitoring for evidence integrity and interference detection
         </p>

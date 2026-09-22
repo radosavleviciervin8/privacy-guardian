@@ -120,11 +120,8 @@ export class BackupManager {
 
       if (this.config.encryption && this.config.encryptionPassword) {
         const jsonString = JSON.stringify(backupData);
-        const encryptedData = await encryptWithPassword(
-          jsonString,
-          this.config.encryptionPassword
-        );
-        
+        const encryptedData = await encryptWithPassword(jsonString, this.config.encryptionPassword);
+
         finalData = {
           metadata,
           encryptedData,
@@ -141,7 +138,11 @@ export class BackupManager {
       // Compress if configured
       if (this.config.compression) {
         const compressed = this.compressData(finalData);
-        if (compressed.size < (finalData as BackupFile).data ? JSON.stringify((finalData as BackupFile).data).length : 0) {
+        if (
+          compressed.size < (finalData as BackupFile).data
+            ? JSON.stringify((finalData as BackupFile).data).length
+            : 0
+        ) {
           // Store compressed version
           this.storeBackup(compressed.id, compressed.data, metadata);
           metadata.compressedSize = compressed.compressedSize;
@@ -156,7 +157,11 @@ export class BackupManager {
       this.updateLastBackup(metadata.id);
 
       // Log audit event
-      logAudit("BACKUP", "INFO", `Created backup: ${metadata.id} with ${incidents.length} incidents`);
+      logAudit(
+        "BACKUP",
+        "INFO",
+        `Created backup: ${metadata.id} with ${incidents.length} incidents`,
+      );
 
       return {
         success: true,
@@ -206,7 +211,7 @@ export class BackupManager {
         if (!password && this.config.encryptionPassword) {
           password = this.config.encryptionPassword;
         }
-        
+
         if (!password) {
           return {
             success: false,
@@ -238,7 +243,11 @@ export class BackupManager {
       setAuditLogs(mergedLogs);
 
       // Log audit event
-      logAudit("RESTORE", "INFO", `Restored backup: ${backupId} with ${data.incidents.length} incidents`);
+      logAudit(
+        "RESTORE",
+        "INFO",
+        `Restored backup: ${backupId} with ${data.incidents.length} incidents`,
+      );
 
       return {
         success: true,
@@ -283,8 +292,8 @@ export class BackupManager {
 
   // List all backups
   listBackups(): BackupMetadata[] {
-    return Array.from(this.backups.values()).sort((a, b) => 
-      new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    return Array.from(this.backups.values()).sort(
+      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
     );
   }
 
@@ -305,7 +314,10 @@ export class BackupManager {
   }
 
   // Export backup to file
-  exportBackup(backupId: string, password?: string): { success: boolean; blob: Blob | null; filename: string; error?: string } {
+  exportBackup(
+    backupId: string,
+    password?: string,
+  ): { success: boolean; blob: Blob | null; filename: string; error?: string } {
     const backup = this.getBackup(backupId);
     if (!backup) {
       return { success: false, blob: null, filename: "", error: "Backup not found" };
@@ -318,9 +330,14 @@ export class BackupManager {
         if (!password && this.config.encryptionPassword) {
           password = this.config.encryptionPassword;
         }
-        
+
         if (!password) {
-          return { success: false, blob: null, filename: "", error: "Backup is encrypted. Please provide password." };
+          return {
+            success: false,
+            blob: null,
+            filename: "",
+            error: "Backup is encrypted. Please provide password.",
+          };
         }
 
         const encryptedData = (backup as EncryptedBackup).encryptedData;
@@ -367,7 +384,7 @@ export class BackupManager {
       // Store the backup
       const backupId = backup.metadata.id || this.generateBackupId();
       backup.metadata.id = backupId;
-      
+
       this.storeBackup(backupId, backup, backup.metadata);
       this.backups.set(backupId, backup.metadata);
       this.saveBackups();
@@ -442,7 +459,7 @@ export class BackupManager {
   cleanupOldBackups(maxBackups?: number): { deleted: number; spaceFreed: number } {
     const max = maxBackups || this.config.maxBackups;
     const backups = this.listBackups();
-    
+
     if (backups.length <= max) {
       return { deleted: 0, spaceFreed: 0 };
     }
@@ -516,8 +533,8 @@ export class BackupManager {
 
   // Private methods
   private generateBackupId(): string {
-    return typeof crypto?.randomUUID === "function" 
-      ? crypto.randomUUID() 
+    return typeof crypto?.randomUUID === "function"
+      ? crypto.randomUUID()
       : `backup-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   }
 
@@ -529,11 +546,15 @@ export class BackupManager {
       .join("");
   }
 
-  private compressData(data: BackupFile | EncryptedBackup): { id: string; data: string; compressedSize: number } {
+  private compressData(data: BackupFile | EncryptedBackup): {
+    id: string;
+    data: string;
+    compressedSize: number;
+  } {
     // Simple compression using JSON stringification
     // In a real implementation, use compression libraries
     const jsonString = JSON.stringify(data);
-    
+
     // For now, just return the original
     // This is a placeholder for actual compression
     return {
@@ -543,7 +564,11 @@ export class BackupManager {
     };
   }
 
-  private storeBackup(backupId: string, data: BackupFile | EncryptedBackup, metadata: BackupMetadata): void {
+  private storeBackup(
+    backupId: string,
+    data: BackupFile | EncryptedBackup,
+    metadata: BackupMetadata,
+  ): void {
     try {
       localStorage.setItem(`${BACKUP_STORAGE_KEY}_${backupId}`, JSON.stringify(data));
       this.backups.set(backupId, metadata);
@@ -566,8 +591,10 @@ export class BackupManager {
   private loadBackups(): void {
     try {
       if (typeof localStorage !== "undefined") {
-        const keys = Object.keys(localStorage).filter((key) => key.startsWith(`${BACKUP_STORAGE_KEY}_`));
-        
+        const keys = Object.keys(localStorage).filter((key) =>
+          key.startsWith(`${BACKUP_STORAGE_KEY}_`),
+        );
+
         for (const key of keys) {
           const backupId = key.replace(`${BACKUP_STORAGE_KEY}_`, "");
           const backupJson = localStorage.getItem(key);

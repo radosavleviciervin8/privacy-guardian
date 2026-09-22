@@ -53,7 +53,8 @@ export interface RateLimitEntry {
 export interface SecurityEvent {
   id: string;
   timestamp: string;
-  type: "login" | "logout" | "failed_login" | "rate_limit" | "suspicious_activity" | "session_expired";
+  type:
+    "login" | "logout" | "failed_login" | "rate_limit" | "suspicious_activity" | "session_expired";
   sessionId?: string;
   userId?: string;
   ipAddress?: string;
@@ -222,7 +223,7 @@ export class SessionManager {
 
     session.tokenExpires = new Date(Date.now() + this.config.sessionTimeout * 60000).toISOString();
     session.lastActivity = new Date().toISOString();
-    
+
     // Generate new tokens
     session.authToken = await this.generateToken();
     session.refreshToken = await this.generateToken();
@@ -271,8 +272,9 @@ export class SessionManager {
     if (this.config.autoExtendSession) {
       const timeSinceActivity = Date.now() - lastActivity.getTime();
       const timeUntilTimeout = timeout - timeSinceActivity;
-      
-      if (timeUntilTimeout < timeout * 0.2) { // Less than 20% of timeout remaining
+
+      if (timeUntilTimeout < timeout * 0.2) {
+        // Less than 20% of timeout remaining
         this.extendSession(sessionId);
       }
     }
@@ -287,7 +289,7 @@ export class SessionManager {
       session.isLocked = true;
       session.lockReason = reason || "Logged out";
       session.lockedAt = new Date().toISOString();
-      
+
       this.sessions.set(sessionId, session);
       this.saveToStorage();
 
@@ -320,7 +322,8 @@ export class SessionManager {
 
   // Record failed login attempt
   recordFailedAttempt(sessionIdOrUserId: string, ipAddress?: string): void {
-    const session = this.sessions.get(sessionIdOrUserId) || 
+    const session =
+      this.sessions.get(sessionIdOrUserId) ||
       Array.from(this.sessions.values()).find((s) => s.userId === sessionIdOrUserId);
 
     if (session) {
@@ -490,8 +493,8 @@ export class SessionManager {
     const allSessions = Array.from(this.sessions.values());
     const activeSessions = allSessions.filter((s) => !s.isLocked);
     const lockedSessions = allSessions.filter((s) => s.isLocked);
-    const rateLimited = Array.from(this.rateLimits.values()).filter((r) => 
-      r.lockedUntil && new Date(r.lockedUntil) > new Date()
+    const rateLimited = Array.from(this.rateLimits.values()).filter(
+      (r) => r.lockedUntil && new Date(r.lockedUntil) > new Date(),
     );
 
     return {
@@ -517,14 +520,16 @@ export class SessionManager {
 
   // Private methods
   private generateSessionId(): string {
-    return typeof crypto?.randomUUID === "function" 
-      ? crypto.randomUUID() 
+    return typeof crypto?.randomUUID === "function"
+      ? crypto.randomUUID()
       : `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   }
 
   private async generateToken(): Promise<string> {
     const random = crypto.getRandomValues(new Uint8Array(32));
-    return Array.from(random).map((b) => b.toString(16).padStart(2, "0")).join("");
+    return Array.from(random)
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
   }
 
   private loadFromStorage(): void {
@@ -559,16 +564,13 @@ export class SessionManager {
       if (typeof localStorage !== "undefined") {
         localStorage.setItem(
           SESSION_STORAGE_KEY,
-          JSON.stringify(Array.from(this.sessions.values()))
+          JSON.stringify(Array.from(this.sessions.values())),
         );
         localStorage.setItem(
           RATE_LIMIT_STORAGE_KEY,
-          JSON.stringify(Array.from(this.rateLimits.values()))
+          JSON.stringify(Array.from(this.rateLimits.values())),
         );
-        localStorage.setItem(
-          SECURITY_EVENTS_STORAGE_KEY,
-          JSON.stringify(this.securityEvents)
-        );
+        localStorage.setItem(SECURITY_EVENTS_STORAGE_KEY, JSON.stringify(this.securityEvents));
       }
     } catch {
       // Storage full or other error
@@ -583,7 +585,7 @@ export class SessionManager {
     };
 
     this.securityEvents.push(securityEvent);
-    
+
     // Limit to 1000 events
     if (this.securityEvents.length > 1000) {
       this.securityEvents.shift();
@@ -608,7 +610,7 @@ export function createAnonymousSession(): UserSession {
     ["read", "write", "export"],
     ["anonymous"],
     undefined,
-    undefined
+    undefined,
   );
 }
 
