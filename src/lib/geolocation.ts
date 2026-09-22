@@ -539,7 +539,9 @@ export class GeolocationEngine {
 
   private ipToNumber(ip: string): number {
     const parts = ip.split(".").map(Number);
-    return (parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3];
+    return (
+      ((parts[0] ?? 0) << 24) | ((parts[1] ?? 0) << 16) | ((parts[2] ?? 0) << 8) | (parts[3] ?? 0)
+    );
   }
 
   private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {

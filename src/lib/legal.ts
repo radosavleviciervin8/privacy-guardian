@@ -994,7 +994,7 @@ export function getArticlesByInstrument(abbreviation: string): LegalArticle[] {
 
 // Get article by full identifier (e.g., "UDHR-12")
 export function getArticle(identifier: string): LegalArticle | undefined {
-  const [abbr, num] = identifier.split("-");
+  const [abbr = "", num] = identifier.split("-");
   const instrument = getLegalInstrument(abbr);
   if (!instrument) return undefined;
   return instrument.articles.find((a) => a.number === num);
