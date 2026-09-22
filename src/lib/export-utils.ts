@@ -299,7 +299,7 @@ export function exportSentinelReport(
     const { filename } = options;
 
     const reportText = formatReport(report);
-    const logsText = formatInterferenceLog(interferenceLogs as any[]);
+    const logsText = formatInterferenceLog(interferenceLogs);
 
     const content = `${reportText}\n\n${logsText}`;
     const blob = new Blob([content], { type: "text/plain;charset=utf-8;" });
