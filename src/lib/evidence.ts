@@ -46,21 +46,28 @@ export const CATEGORY_LABELS: Record<CategoryKey, string> = {
 };
 
 // Category descriptions with legal relevance
-export const CATEGORY_DESCRIPTIONS: Record<CategoryKey, { description: string; legalRelevance: string[]; technicalNotes: string }> = {
+export const CATEGORY_DESCRIPTIONS: Record<
+  CategoryKey,
+  { description: string; legalRelevance: string[]; technicalNotes: string }
+> = {
   rf: {
-    description: "Observations related to radio frequency signals, electromagnetic interference, or spectrum monitoring.",
+    description:
+      "Observations related to radio frequency signals, electromagnetic interference, or spectrum monitoring.",
     legalRelevance: ["ITU Constitution", "National radio regulations"],
-    technicalNotes: "Browser APIs have limited RF detection capabilities. Observations are typically based on user reports or visible equipment.",
+    technicalNotes:
+      "Browser APIs have limited RF detection capabilities. Observations are typically based on user reports or visible equipment.",
   },
   bluetooth: {
     description: "Observations of Bluetooth device behavior, connections, or discovery.",
     legalRelevance: ["UDHR Art. 12", "ICCPR Art. 17", "ECHR Art. 8"],
-    technicalNotes: "Web Bluetooth API requires explicit user permission. Device names may be voluntarily exposed by users.",
+    technicalNotes:
+      "Web Bluetooth API requires explicit user permission. Device names may be voluntarily exposed by users.",
   },
   infrared: {
     description: "Observations using infrared sensors, thermal imaging, or optical detection.",
     legalRelevance: ["UDHR Art. 12", "GDPR Art. 9 (biometric data)"],
-    technicalNotes: "Browser APIs do not provide direct infrared access. Observations are based on user reports.",
+    technicalNotes:
+      "Browser APIs do not provide direct infrared access. Observations are based on user reports.",
   },
   vibration: {
     description: "Observations of vibration patterns, seismic activity, or low-frequency signals.",
@@ -73,9 +80,11 @@ export const CATEGORY_DESCRIPTIONS: Record<CategoryKey, { description: string; l
     technicalNotes: "Microphone access requires explicit user permission. No silent recording.",
   },
   drone: {
-    description: "Observations of possible drone activity, including visual, audio, or RF detection.",
+    description:
+      "Observations of possible drone activity, including visual, audio, or RF detection.",
     legalRelevance: ["Aviation regulations", "Privacy laws"],
-    technicalNotes: "Browser cannot reliably detect drones. Observations are based on user reports.",
+    technicalNotes:
+      "Browser cannot reliably detect drones. Observations are based on user reports.",
   },
   mobile: {
     description: "Observations of mobile device behavior, location tracking, or app activity.",
@@ -105,12 +114,14 @@ export const CATEGORY_DESCRIPTIONS: Record<CategoryKey, { description: string; l
   network: {
     description: "Observations of network traffic, data transmission, or cyber activity.",
     legalRelevance: ["Computer Misuse Act", "Cybersecurity laws"],
-    technicalNotes: "Browser cannot intercept network traffic. Observations are based on user reports.",
+    technicalNotes:
+      "Browser cannot intercept network traffic. Observations are based on user reports.",
   },
   signal_jamming: {
     description: "Detection or observation of signal jamming, interference, or blocking attempts.",
     legalRelevance: ["ITU Constitution", "National radio regulations", "Computer Misuse Act"],
-    technicalNotes: "This application does NOT perform jamming. Only observes and records potential interference.",
+    technicalNotes:
+      "This application does NOT perform jamming. Only observes and records potential interference.",
   },
   surveillance: {
     description: "Observations of surveillance activity, monitoring, or tracking attempts.",
@@ -244,7 +255,12 @@ export function getLegalFrameworkRecommendations(classification: string): string
     "Audio/voice observation": ["UDHR Art. 12", "ECHR Art. 8", "Wiretap laws"],
     "Possible drone observation": ["Aviation regulations", "UDHR Art. 12", "Privacy laws"],
     "Possible mobile/device event": ["UDHR Art. 12", "GDPR", "Telecommunications laws"],
-    "Unwanted monitoring concern": ["UDHR Art. 12", "ICCPR Art. 17", "ECHR Art. 8", "Stalking laws"],
+    "Unwanted monitoring concern": [
+      "UDHR Art. 12",
+      "ICCPR Art. 17",
+      "ECHR Art. 8",
+      "Stalking laws",
+    ],
     "Signal interference observation": ["ITU Constitution", "Computer Misuse Act", "UDHR Art. 12"],
     "Network anomaly observation": ["Computer Misuse Act", "Cybersecurity laws", "UDHR Art. 12"],
     "Surveillance concern": ["UDHR Art. 12", "ICCPR Art. 17", "ECHR Art. 8", "Surveillance laws"],
@@ -306,7 +322,7 @@ export function newId() {
 export function capabilityReport(): string[] {
   const w = window as unknown as Record<string, unknown>;
   const n = navigator as unknown as Record<string, unknown>;
-  
+
   const reports: string[] = [
     `Secure context: ${window.isSecureContext ? "YES" : "NO"}`,
     `Web Bluetooth: ${"bluetooth" in n ? "AVAILABLE" : "UNAVAILABLE"}`,
@@ -414,9 +430,7 @@ export function getDateRange(incidents: Incident[]): { earliest?: string; latest
 }
 
 // Create a new incident with enhanced metadata
-export function createIncident(
-  data: Partial<Incident> & Pick<Incident, "observation">,
-): Incident {
+export function createIncident(data: Partial<Incident> & Pick<Incident, "observation">): Incident {
   const now = nowISO();
   const sensitivity = getDefaultSensitivity(data.classification || CLASSIFICATIONS[0]);
 
@@ -448,10 +462,7 @@ export function createIncident(
 }
 
 // Update an incident
-export function updateIncident(
-  incident: Incident,
-  updates: Partial<Incident>,
-): Incident {
+export function updateIncident(incident: Incident, updates: Partial<Incident>): Incident {
   return {
     ...incident,
     ...updates,
@@ -492,10 +503,7 @@ export function getIncidentsBySensitivity(
 }
 
 // Get incidents by status
-export function getIncidentsByStatus(
-  incidents: Incident[],
-  status: EvidenceStatus,
-): Incident[] {
+export function getIncidentsByStatus(incidents: Incident[], status: EvidenceStatus): Incident[] {
   return incidents.filter((i) => i.status === status);
 }
 
@@ -519,10 +527,7 @@ export function getIncidentsByDateRange(
 }
 
 // Search incidents by text
-export function searchIncidents(
-  incidents: Incident[],
-  query: string,
-): Incident[] {
+export function searchIncidents(incidents: Incident[], query: string): Incident[] {
   const lowerQuery = query.toLowerCase();
   return incidents.filter((i) => {
     return (
@@ -536,7 +541,10 @@ export function searchIncidents(
 }
 
 // Validate incident data
-export function validateIncident(incident: Partial<Incident>): { valid: boolean; errors: string[] } {
+export function validateIncident(incident: Partial<Incident>): {
+  valid: boolean;
+  errors: string[];
+} {
   const errors: string[] = [];
 
   if (!incident.observation || incident.observation.trim() === "") {
@@ -609,7 +617,15 @@ export function hasSensitiveCategories(incident: Incident): boolean {
 export function getRecommendedSensitivity(incident: Partial<Incident>): SensitivityLevel {
   // Check if any sensitive categories are enabled
   if (incident.categories) {
-    const sensitiveCats: CategoryKey[] = ["gps", "camera", "audio", "bluetooth", "wifi", "signal_jamming", "surveillance"];
+    const sensitiveCats: CategoryKey[] = [
+      "gps",
+      "camera",
+      "audio",
+      "bluetooth",
+      "wifi",
+      "signal_jamming",
+      "surveillance",
+    ];
     for (const cat of sensitiveCats) {
       if (incident.categories[cat]) {
         return "restricted";
@@ -646,7 +662,10 @@ export function getRecommendedSensitivity(incident: Partial<Incident>): Sensitiv
 }
 
 // Import evidence from backup
-export function importEvidence(backup: { incidents: Incident[]; metadata?: Record<string, unknown> }): { success: boolean; count: number; errors: string[] } {
+export function importEvidence(backup: {
+  incidents: Incident[];
+  metadata?: Record<string, unknown>;
+}): { success: boolean; count: number; errors: string[] } {
   const errors: string[] = [];
   const validIncidents: Incident[] = [];
 
@@ -673,7 +692,10 @@ export function importEvidence(backup: { incidents: Incident[]; metadata?: Recor
 }
 
 // Export evidence to backup format
-export function exportEvidenceBackup(incidents: Incident[]): { incidents: Incident[]; metadata: Record<string, string> } {
+export function exportEvidenceBackup(incidents: Incident[]): {
+  incidents: Incident[];
+  metadata: Record<string, string>;
+} {
   return {
     incidents,
     metadata: {

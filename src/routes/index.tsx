@@ -47,7 +47,12 @@ import {
   auditScan,
   type AuditLog,
 } from "@/lib/audit";
-import { isEncryptionAvailable, encryptWithPassword, decryptWithPassword, type EncryptedData } from "@/lib/encryption";
+import {
+  isEncryptionAvailable,
+  encryptWithPassword,
+  decryptWithPassword,
+  type EncryptedData,
+} from "@/lib/encryption";
 import { getLegalFrameworkSummary, generateComplianceReport } from "@/lib/legal";
 import { SentinelDashboard } from "@/components/SentinelDashboard";
 
@@ -114,7 +119,7 @@ function Index() {
     setIncidents(getEvidence());
     setFilteredIncidents(getEvidence());
     setCapabilities(capabilityReport().join("\n"));
-    
+
     // Start signal monitoring
     sentinelMonitor.start();
     sentinelMonitor.onSignal((pattern) => {
@@ -140,11 +145,12 @@ function Index() {
       setFilteredIncidents(allIncidents);
     } else {
       const lowerQuery = searchQuery.toLowerCase();
-      const filtered = allIncidents.filter((i) => 
-        i.observation.toLowerCase().includes(lowerQuery) ||
-        i.technical.toLowerCase().includes(lowerQuery) ||
-        i.classification.toLowerCase().includes(lowerQuery) ||
-        i.id.toLowerCase().includes(lowerQuery)
+      const filtered = allIncidents.filter(
+        (i) =>
+          i.observation.toLowerCase().includes(lowerQuery) ||
+          i.technical.toLowerCase().includes(lowerQuery) ||
+          i.classification.toLowerCase().includes(lowerQuery) ||
+          i.id.toLowerCase().includes(lowerQuery),
       );
       setFilteredIncidents(filtered);
     }
@@ -167,9 +173,14 @@ function Index() {
       setSentinelReport(result.report);
       setIncidents(result.incidents);
       setFilteredIncidents(result.incidents);
-      logAudit("SCAN", result.report.tampered > 0 ? "CRITICAL" : result.report.repaired > 0 ? "WARNING" : "INFO",
-        `Integrity scan: ${result.report.verified} verified, ${result.report.repaired} repaired, ${result.report.tampered} tampered`);
-      setNotice(`Sentinel scan complete: ${result.report.verified} verified, ${result.report.tampered} tampered`);
+      logAudit(
+        "SCAN",
+        result.report.tampered > 0 ? "CRITICAL" : result.report.repaired > 0 ? "WARNING" : "INFO",
+        `Integrity scan: ${result.report.verified} verified, ${result.report.repaired} repaired, ${result.report.tampered} tampered`,
+      );
+      setNotice(
+        `Sentinel scan complete: ${result.report.verified} verified, ${result.report.tampered} tampered`,
+      );
     } catch (error) {
       setNotice("Sentinel scan failed. Please try again.");
     }
@@ -179,10 +190,10 @@ function Index() {
   async function saveIncident() {
     const obs = observation.trim();
     if (!obs) return setNotice("Please describe what was directly observed.");
-    
+
     const validation = validateIncident({ observation: obs, technical, classification });
     if (!validation.valid) return setNotice(validation.errors[0]);
-    
+
     if (obs.length > MAX_OBSERVATION || technical.length > MAX_TECHNICAL)
       return setNotice("Entry too long. Please shorten the text.");
 
@@ -192,7 +203,7 @@ function Index() {
       classification,
       categories,
     });
-    
+
     incident.hash = await sha256(JSON.stringify(incident));
     const next = [...getEvidence(), incident];
     setEvidence(next);
@@ -202,13 +213,17 @@ function Index() {
     setTechnical("");
     setCategories(emptyCategories());
     setClassification(CLASSIFICATIONS[0]);
-    
+
     auditCreate(incident);
     setNotice("Timestamped local evidence record created with SHA-256 integrity seal.");
   }
 
   async function requestBluetooth() {
-    const bt = (navigator as unknown as { bluetooth?: { requestDevice: (o: unknown) => Promise<{ name?: string; id?: string }> } }).bluetooth;
+    const bt = (
+      navigator as unknown as {
+        bluetooth?: { requestDevice: (o: unknown) => Promise<{ name?: string; id?: string }> };
+      }
+    ).bluetooth;
     if (!bt) return setNotice("Web Bluetooth is not available in this browser or context.");
     try {
       const device = await bt.requestDevice({ acceptAllDevices: true });
@@ -221,7 +236,9 @@ function Index() {
         }),
       );
       setCategories((c) => ({ ...c, bluetooth: true }));
-      setNotice("Bluetooth information returned by the browser. This does not prove malicious activity.");
+      setNotice(
+        "Bluetooth information returned by the browser. This does not prove malicious activity.",
+      );
     } catch (e) {
       if ((e as Error).name !== "NotFoundError") setNotice("Bluetooth request did not complete.");
     }
@@ -242,7 +259,8 @@ function Index() {
   }
 
   function deleteEvidence() {
-    if (!confirm("Delete ALL locally stored evidence from this browser? This cannot be undone.")) return;
+    if (!confirm("Delete ALL locally stored evidence from this browser? This cannot be undone."))
+      return;
     clearEvidence();
     setIncidents([]);
     setFilteredIncidents([]);
@@ -276,7 +294,7 @@ function Index() {
   async function handleEncrypt() {
     if (!encryptionPassword) return setNotice("Please enter a password.");
     if (!observation) return setNotice("Please enter text to encrypt.");
-    
+
     try {
       const encrypted = await encryptWithPassword(observation, encryptionPassword);
       setEncryptedData(encrypted);
@@ -289,7 +307,7 @@ function Index() {
   async function handleDecrypt() {
     if (!decryptionPassword) return setNotice("Please enter a password.");
     if (!encryptedData) return setNotice("No encrypted data to decrypt.");
-    
+
     try {
       const decrypted = await decryptWithPassword(encryptedData, decryptionPassword);
       setDecryptedText(decrypted);
@@ -339,7 +357,16 @@ function Index() {
   const recommendedSensitivity = getRecommendedSensitivity({ classification, categories });
 
   // Get enabled categories count
-  const enabledCategories = getEnabledCategories({ id: "temp", timestamp: "", attribution: "", classification, observation: "", technical: "", categories, browser: { userAgent: "", online: false, secureContext: false } } as Incident);
+  const enabledCategories = getEnabledCategories({
+    id: "temp",
+    timestamp: "",
+    attribution: "",
+    classification,
+    observation: "",
+    technical: "",
+    categories,
+    browser: { userAgent: "", online: false, secureContext: false },
+  } as Incident);
 
   return (
     <div className="min-h-screen">
@@ -364,8 +391,9 @@ function Index() {
             </div>
           </div>
           <p className="mt-3 max-w-4xl leading-relaxed text-muted-foreground">
-            Enhanced browser-based defensive evidence and privacy registry with autonomous interference detection, 
-            encryption, comprehensive audit logging, and 200+ international human rights law safeguards.
+            Enhanced browser-based defensive evidence and privacy registry with autonomous
+            interference detection, encryption, comprehensive audit logging, and 200+ international
+            human rights law safeguards.
           </p>
         </div>
       </header>
@@ -411,7 +439,10 @@ function Index() {
       <main className="mx-auto max-w-7xl space-y-5 px-5 py-5">
         {/* Notice */}
         {notice && (
-          <div role="status" className="badge tone-blue fixed bottom-5 left-1/2 z-50 max-w-[90vw] -translate-x-1/2 border border-border shadow-lg animate-in fade-in slide-in-from-bottom-2">
+          <div
+            role="status"
+            className="badge tone-blue fixed bottom-5 left-1/2 z-50 max-w-[90vw] -translate-x-1/2 border border-border shadow-lg animate-in fade-in slide-in-from-bottom-2"
+          >
             {notice}
           </div>
         )}
@@ -427,14 +458,17 @@ function Index() {
                 </h2>
                 <span className="badge tone-green">Local evidence mode</span>
                 <p className="my-3 text-xs text-muted-foreground">
-                  No automatic transmission. No RF jammer. No hidden microphone. No hidden camera. No
-                  remote device control.
+                  No automatic transmission. No RF jammer. No hidden microphone. No hidden camera.
+                  No remote device control.
                 </p>
                 <div className="flex flex-wrap gap-2">
                   <button className="btn btn-safe" onClick={requestBluetooth}>
                     Request Bluetooth Device
                   </button>
-                  <button className="btn" onClick={() => setCapabilities(capabilityReport().join("\n"))}>
+                  <button
+                    className="btn"
+                    onClick={() => setCapabilities(capabilityReport().join("\n"))}
+                  >
                     Check Browser Sensors
                   </button>
                   <button className="btn" onClick={focusForm}>
@@ -462,7 +496,12 @@ function Index() {
                 <div className="space-y-2 max-h-40 overflow-auto">
                   {CATEGORY_KEYS.map((k) => (
                     <label key={k} className="flex cursor-pointer items-center gap-2 text-sm">
-                      <input type="checkbox" className="accent-accent" checked={categories[k]} onChange={() => toggle(k)} />
+                      <input
+                        type="checkbox"
+                        className="accent-accent"
+                        checked={categories[k]}
+                        onChange={() => toggle(k)}
+                      />
                       <span className={categories[k] ? "font-medium" : "text-muted-foreground"}>
                         {CATEGORY_LABELS[k]}
                       </span>
@@ -480,7 +519,7 @@ function Index() {
               <h2 className="mb-3 text-lg font-bold flex items-center gap-2">
                 📝 Incident / Observation Record
               </h2>
-              
+
               {/* Legal Recommendations */}
               {legalRecommendations.length > 0 && (
                 <div className="mb-4 p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
@@ -500,21 +539,32 @@ function Index() {
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
                   <label className="text-xs text-muted-foreground">Event classification</label>
-                  <select ref={formRef} className="field" value={classification} onChange={(e) => setClassification(e.target.value)}>
-                    {CLASSIFICATIONS.map((c) => <option key={c}>{c}</option>)}
+                  <select
+                    ref={formRef}
+                    className="field"
+                    value={classification}
+                    onChange={(e) => setClassification(e.target.value)}
+                  >
+                    {CLASSIFICATIONS.map((c) => (
+                      <option key={c}>{c}</option>
+                    ))}
                   </select>
                 </div>
                 <div>
                   <label className="text-xs text-muted-foreground">Sensitivity Level</label>
                   <div className="flex gap-2">
-                    <span className={`badge ${recommendedSensitivity === "restricted" ? "tone-red" : recommendedSensitivity === "confidential" ? "tone-yellow" : "tone-green"}`}>
+                    <span
+                      className={`badge ${recommendedSensitivity === "restricted" ? "tone-red" : recommendedSensitivity === "confidential" ? "tone-yellow" : "tone-green"}`}
+                    >
                       Recommended: {recommendedSensitivity.toUpperCase()}
                     </span>
                   </div>
                 </div>
               </div>
 
-              <label className="text-xs text-muted-foreground mt-4 block">What was directly observed?</label>
+              <label className="text-xs text-muted-foreground mt-4 block">
+                What was directly observed?
+              </label>
               <textarea
                 className="field"
                 maxLength={MAX_OBSERVATION}
@@ -526,7 +576,9 @@ function Index() {
                 {observation.length}/{MAX_OBSERVATION} characters
               </p>
 
-              <label className="text-xs text-muted-foreground mt-4 block">Optional technical evidence/reference</label>
+              <label className="text-xs text-muted-foreground mt-4 block">
+                Optional technical evidence/reference
+              </label>
               <textarea
                 className="field"
                 maxLength={MAX_TECHNICAL}
@@ -542,7 +594,15 @@ function Index() {
                 <button className="btn btn-primary" onClick={saveIncident}>
                   Save timestamped incident
                 </button>
-                <button className="btn btn-warn" onClick={() => { setObservation(""); setTechnical(""); setCategories(emptyCategories()); setClassification(CLASSIFICATIONS[0]); }}>
+                <button
+                  className="btn btn-warn"
+                  onClick={() => {
+                    setObservation("");
+                    setTechnical("");
+                    setCategories(emptyCategories());
+                    setClassification(CLASSIFICATIONS[0]);
+                  }}
+                >
                   Clear
                 </button>
               </div>
@@ -631,23 +691,35 @@ function Index() {
               <div className="max-h-90 overflow-auto rounded-xl border border-border">
                 {filteredIncidents.length === 0 ? (
                   <div className="log-item text-xs text-muted-foreground">
-                    {searchQuery ? `No incidents match "${searchQuery}"` : "No local incidents recorded yet."}
+                    {searchQuery
+                      ? `No incidents match "${searchQuery}"`
+                      : "No local incidents recorded yet."}
                   </div>
                 ) : (
                   [...filteredIncidents].reverse().map((x) => (
                     <div key={x.id} className="log-item group">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <strong className={x.classification.includes("[QUARANTINED]") ? "text-red-500" : ""}>
+                          <strong
+                            className={
+                              x.classification.includes("[QUARANTINED]") ? "text-red-500" : ""
+                            }
+                          >
                             {x.classification}
                           </strong>
                           <div className="text-xs text-muted-foreground">{x.timestamp}</div>
                         </div>
                         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button className="text-xs btn-ghost" onClick={() => navigator.clipboard.writeText(x.id)}>
+                          <button
+                            className="text-xs btn-ghost"
+                            onClick={() => navigator.clipboard.writeText(x.id)}
+                          >
                             Copy ID
                           </button>
-                          <button className="text-xs btn-danger" onClick={() => deleteIncident(x.id)}>
+                          <button
+                            className="text-xs btn-danger"
+                            onClick={() => deleteIncident(x.id)}
+                          >
                             Delete
                           </button>
                         </div>
@@ -668,7 +740,9 @@ function Index() {
                           </div>
                         )}
                         {x.sensitivity && (
-                          <span className={`badge text-xs ${x.sensitivity === "restricted" ? "tone-red" : x.sensitivity === "confidential" ? "tone-yellow" : "tone-green"}`}>
+                          <span
+                            className={`badge text-xs ${x.sensitivity === "restricted" ? "tone-red" : x.sensitivity === "confidential" ? "tone-yellow" : "tone-green"}`}
+                          >
                             {x.sensitivity.toUpperCase()}
                           </span>
                         )}
@@ -682,14 +756,17 @@ function Index() {
             {/* Browser Capability Report */}
             <section className="panel">
               <h2 className="mb-3 text-lg font-bold">🔧 Browser Capability Report</h2>
-              <pre className="font-mono text-sm whitespace-pre-wrap text-muted-foreground">{capabilities}</pre>
+              <pre className="font-mono text-sm whitespace-pre-wrap text-muted-foreground">
+                {capabilities}
+              </pre>
             </section>
 
             {/* Privacy & Human Rights Safeguards */}
             <section className="panel">
               <h2 className="mb-3 text-lg font-bold">🛡️ Privacy & Human-Rights Safeguards</h2>
               <p className="mb-3 text-sm">
-                This application implements <strong>{SAFEGUARD_COUNT}+ defensive safeguards</strong> mapped to international human rights law:
+                This application implements <strong>{SAFEGUARD_COUNT}+ defensive safeguards</strong>{" "}
+                mapped to international human rights law:
               </p>
               <div className="grid gap-2 md:grid-cols-2">
                 {SAFEGUARD_GROUPS.map((group) => (
@@ -707,16 +784,29 @@ function Index() {
 
             {/* NDA / Provenance */}
             <section className="panel">
-              <h2 className="mb-3 text-lg font-bold">📜 NDA / Provenance / Private License Notice</h2>
-              <p className="text-sm"><strong>Copyright:</strong> © {ATTRIBUTION}. All rights reserved.</p>
-              <p className="text-sm"><strong>Project:</strong> {PROJECT_NAME}</p>
-              <p className="text-sm"><strong>License:</strong> Private License — confidential, non-transferable, subject to NDA.</p>
-              <p className="text-sm"><strong>Safeguards:</strong> 200+ international human rights law compliant</p>
-              <p className="font-mono text-sm"><strong>Timestamp:</strong> {iso || "--"}</p>
+              <h2 className="mb-3 text-lg font-bold">
+                📜 NDA / Provenance / Private License Notice
+              </h2>
+              <p className="text-sm">
+                <strong>Copyright:</strong> © {ATTRIBUTION}. All rights reserved.
+              </p>
+              <p className="text-sm">
+                <strong>Project:</strong> {PROJECT_NAME}
+              </p>
+              <p className="text-sm">
+                <strong>License:</strong> Private License — confidential, non-transferable, subject
+                to NDA.
+              </p>
+              <p className="text-sm">
+                <strong>Safeguards:</strong> 200+ international human rights law compliant
+              </p>
+              <p className="font-mono text-sm">
+                <strong>Timestamp:</strong> {iso || "--"}
+              </p>
               <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
                 This notice records project attribution and provenance information. It does not by
-                itself create or prove a legally enforceable NDA, copyright registration, ownership of
-                radio spectrum, or legal finding against another person.
+                itself create or prove a legally enforceable NDA, copyright registration, ownership
+                of radio spectrum, or legal finding against another person.
               </p>
             </section>
           </div>
@@ -743,18 +833,35 @@ function Index() {
                     </div>
                     <p className="text-sm text-muted-foreground mb-3">{group.law}</p>
                     <p className="text-sm text-muted-foreground mb-4">{group.description}</p>
-                    
+
                     <div className="grid gap-2">
                       {group.items.map((item, index) => (
-                        <div key={index} className={`p-3 rounded ${item.priority === "critical" ? "bg-red-500/10 border border-red-500/20" : item.priority === "high" ? "bg-yellow-500/10 border border-yellow-500/20" : "bg-muted/50"}`}>
+                        <div
+                          key={index}
+                          className={`p-3 rounded ${item.priority === "critical" ? "bg-red-500/10 border border-red-500/20" : item.priority === "high" ? "bg-yellow-500/10 border border-yellow-500/20" : "bg-muted/50"}`}
+                        >
                           <div className="flex items-center gap-2">
-                            <span className={item.priority === "critical" ? "text-red-500" : item.priority === "high" ? "text-yellow-500" : "text-green-500"}>
-                              {item.priority === "critical" ? "🔴" : item.priority === "high" ? "🟡" : "🟢"}
+                            <span
+                              className={
+                                item.priority === "critical"
+                                  ? "text-red-500"
+                                  : item.priority === "high"
+                                    ? "text-yellow-500"
+                                    : "text-green-500"
+                              }
+                            >
+                              {item.priority === "critical"
+                                ? "🔴"
+                                : item.priority === "high"
+                                  ? "🟡"
+                                  : "🟢"}
                             </span>
                             <p className="font-medium">{item.description}</p>
                           </div>
                           {item.lawReference && (
-                            <p className="text-xs text-muted-foreground mt-1">{item.lawReference}</p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {item.lawReference}
+                            </p>
                           )}
                           {item.technicalImplementation && (
                             <p className="text-xs text-muted-foreground mt-1">
@@ -796,7 +903,10 @@ function Index() {
                 <h3 className="text-xl font-bold mb-4">Compliance Report</h3>
                 <div className="space-y-4">
                   {generateComplianceReport(PROJECT_NAME).map((check, index) => (
-                    <div key={index} className={`p-4 rounded-lg border ${check.compliant ? "border-green-500 bg-green-500/10" : "border-red-500 bg-red-500/10"}`}>
+                    <div
+                      key={index}
+                      className={`p-4 rounded-lg border ${check.compliant ? "border-green-500 bg-green-500/10" : "border-red-500 bg-red-500/10"}`}
+                    >
                       <div className="flex items-center gap-2">
                         <span className={check.compliant ? "text-green-500" : "text-red-500"}>
                           {check.compliant ? "✓" : "✗"}
@@ -822,7 +932,9 @@ function Index() {
             <div className="panel">
               <h2 className="mb-3 text-2xl font-bold">🔐 Encryption Utilities</h2>
               <p className="text-muted-foreground mb-6">
-                {isEncryptionAvailable() ? "Web Crypto API is available for client-side encryption." : "Web Crypto API is not available in this browser."}
+                {isEncryptionAvailable()
+                  ? "Web Crypto API is available for client-side encryption."
+                  : "Web Crypto API is not available in this browser."}
               </p>
 
               {isEncryptionAvailable() && (
@@ -862,7 +974,12 @@ function Index() {
                         <pre className="text-xs font-mono whitespace-pre-wrap">
                           {JSON.stringify(encryptedData, null, 2)}
                         </pre>
-                        <button className="btn btn-ghost text-xs mt-2" onClick={() => navigator.clipboard.writeText(JSON.stringify(encryptedData))}>
+                        <button
+                          className="btn btn-ghost text-xs mt-2"
+                          onClick={() =>
+                            navigator.clipboard.writeText(JSON.stringify(encryptedData))
+                          }
+                        >
                           Copy to Clipboard
                         </button>
                       </div>
@@ -902,7 +1019,10 @@ function Index() {
                       <div className="mt-4 p-3 bg-blue-500/10 rounded border border-blue-500/20">
                         <h4 className="font-semibold mb-2">Decrypted Text</h4>
                         <p className="whitespace-pre-wrap">{decryptedText}</p>
-                        <button className="btn btn-ghost text-xs mt-2" onClick={() => navigator.clipboard.writeText(decryptedText)}>
+                        <button
+                          className="btn btn-ghost text-xs mt-2"
+                          onClick={() => navigator.clipboard.writeText(decryptedText)}
+                        >
                           Copy to Clipboard
                         </button>
                       </div>
@@ -930,7 +1050,8 @@ function Index() {
         © {ATTRIBUTION} — NDA / provenance / defensive technology concept — international
         human-rights-law ethics and privacy principles. Private License. All rights reserved.
         <br />
-        Enhanced with 200+ safeguards, autonomous interference detection, encryption, and comprehensive legal framework compliance.
+        Enhanced with 200+ safeguards, autonomous interference detection, encryption, and
+        comprehensive legal framework compliance.
       </footer>
     </div>
   );

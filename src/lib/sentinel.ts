@@ -126,7 +126,9 @@ const SUSPICIOUS_PATTERNS = {
   },
 };
 
-function detectSuspiciousPatterns(text: string): { type: string; pattern: string; score: number }[] {
+function detectSuspiciousPatterns(
+  text: string,
+): { type: string; pattern: string; score: number }[] {
   const results: { type: string; pattern: string; score: number }[] = [];
   const lowerText = text.toLowerCase();
 
@@ -154,7 +156,7 @@ function analyzeSignalPattern(signal: SignalPattern): boolean {
   };
 
   const config = thresholds[signal.type] || thresholds.rf;
-  
+
   // Check if signal strength is suspiciously low (possible jamming)
   if (signal.strength < config.suspiciousBelow) {
     return true;
@@ -203,10 +205,8 @@ export async function runSentinelScan(
     const expected = await hashOf(fixed);
 
     // Detect suspicious content patterns
-    const suspiciousContent = detectSuspiciousPatterns(
-      `${fixed.observation} ${fixed.technical}`,
-    );
-    
+    const suspiciousContent = detectSuspiciousPatterns(`${fixed.observation} ${fixed.technical}`);
+
     if (suspiciousContent.length > 0) {
       const highScore = suspiciousContent.some((s) => s.score > 0.8);
       const log: InterferenceLog = {
@@ -345,9 +345,7 @@ export async function runSentinelScan(
 
   if (repaired || tampered) setEvidence(output);
 
-  const chainHash = await sha256(
-    output.map((i) => i.hash ?? "").join("|") || "empty-registry",
-  );
+  const chainHash = await sha256(output.map((i) => i.hash ?? "").join("|") || "empty-registry");
 
   // Calculate interference score (0-100)
   let interferenceScore = 0;
@@ -382,9 +380,7 @@ export async function runSentinelScan(
     );
   }
   if (interferenceScore > 0) {
-    recommendations.push(
-      "Enable continuous monitoring in settings. Regular scans recommended.",
-    );
+    recommendations.push("Enable continuous monitoring in settings. Regular scans recommended.");
   }
   if (interferenceScore === 0 && incidents.length > 0) {
     recommendations.push("Registry integrity verified. Continue regular monitoring.");
@@ -402,14 +398,7 @@ export async function runSentinelScan(
     );
   }
 
-  lines.push(
-    line(
-      "info",
-      `Chain summary hash: ${chainHash.slice(0, 32)}…`,
-      "integrity",
-      "verify",
-    ),
-  );
+  lines.push(line("info", `Chain summary hash: ${chainHash.slice(0, 32)}…`, "integrity", "verify"));
 
   // Add legal compliance checks
   const legalChecks: LegalComplianceCheck[] = [
@@ -488,7 +477,7 @@ export function startContinuousMonitoring(
   };
 
   timer = setInterval(scan, interval);
-  
+
   // Initial scan
   scan();
 
@@ -511,7 +500,7 @@ export class SignalMonitor {
   start() {
     if (this.active) return;
     this.active = true;
-    
+
     // Simulate signal detection (in real deployment, this would use Web APIs)
     this.simulateSignalDetection();
   }
@@ -529,8 +518,15 @@ export class SignalMonitor {
     if (!this.active) return;
 
     // Simulate various signal types
-    const signalTypes: SignalPattern["type"][] = ["bluetooth", "rf", "wifi", "infrared", "audio", "vibration"];
-    
+    const signalTypes: SignalPattern["type"][] = [
+      "bluetooth",
+      "rf",
+      "wifi",
+      "infrared",
+      "audio",
+      "vibration",
+    ];
+
     const simulate = () => {
       if (!this.active) return;
 
