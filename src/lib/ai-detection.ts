@@ -19,7 +19,7 @@ export interface AnomalyDetectionResult {
   legalImplications: string[];
 }
 
-export type AnomalyType = 
+export type AnomalyType =
   | "signal_jamming"
   | "bluetooth_spoofing"
   | "rf_interference"
@@ -70,7 +70,8 @@ const DETECTION_RULES: DetectionRule[] = [
     severity: "critical",
     category: "rf",
     legalReference: "ITU Constitution Art. 45, National Radio Regulations",
-    recommendation: "Investigate signal source immediately. Document frequency, duration, and location.",
+    recommendation:
+      "Investigate signal source immediately. Document frequency, duration, and location.",
   },
   {
     id: "sj-002",
@@ -94,7 +95,8 @@ const DETECTION_RULES: DetectionRule[] = [
     severity: "critical",
     category: "wifi",
     legalReference: "Computer Misuse Act 1990, CFAA",
-    recommendation: "URGENT: Wi-Fi deauth attacks are illegal. Report to authorities with evidence.",
+    recommendation:
+      "URGENT: Wi-Fi deauth attacks are illegal. Report to authorities with evidence.",
   },
   {
     id: "sj-004",
@@ -106,7 +108,8 @@ const DETECTION_RULES: DetectionRule[] = [
     severity: "critical",
     category: "drone",
     legalReference: "Aviation Security Laws, Computer Misuse Act",
-    recommendation: "Drone interference is a serious offense. Contact aviation authorities immediately.",
+    recommendation:
+      "Drone interference is a serious offense. Contact aviation authorities immediately.",
   },
 
   // Surveillance Pattern Detection
@@ -173,7 +176,8 @@ const DETECTION_RULES: DetectionRule[] = [
     severity: "critical",
     category: "rf",
     legalReference: "Evidence Integrity Principles, ICCPR Art. 14",
-    recommendation: "Hash mismatch indicates potential tampering. Quarantine record and investigate.",
+    recommendation:
+      "Hash mismatch indicates potential tampering. Quarantine record and investigate.",
   },
   {
     id: "dt-002",
@@ -232,7 +236,8 @@ const DETECTION_RULES: DetectionRule[] = [
     severity: "critical",
     category: "cyber",
     legalReference: "Computer Misuse Act, Cybercrime Convention",
-    recommendation: "Network intrusion is a criminal offense. Preserve all evidence and contact law enforcement.",
+    recommendation:
+      "Network intrusion is a criminal offense. Preserve all evidence and contact law enforcement.",
   },
   {
     id: "ns-003",
@@ -304,7 +309,8 @@ const DETECTION_RULES: DetectionRule[] = [
     severity: "high",
     category: "rf",
     legalReference: "Coordinated Attack Patterns, ITU Regulations",
-    recommendation: "Multi-signal correlation detected. This may indicate a sophisticated attack. Investigate thoroughly.",
+    recommendation:
+      "Multi-signal correlation detected. This may indicate a sophisticated attack. Investigate thoroughly.",
   },
   {
     id: "ms-002",
@@ -421,7 +427,11 @@ export class AIDetectionEngine {
   }
 
   // Get overall threat score
-  getThreatScore(): { score: number; level: "low" | "medium" | "high" | "critical"; breakdown: Record<AnomalyType, number> } {
+  getThreatScore(): {
+    score: number;
+    level: "low" | "medium" | "high" | "critical";
+    breakdown: Record<AnomalyType, number>;
+  } {
     const breakdown: Record<AnomalyType, number> = {
       signal_jamming: 0,
       bluetooth_spoofing: 0,
@@ -465,7 +475,9 @@ export class AIDetectionEngine {
   }
 
   // Get anomalies by severity
-  getAnomaliesBySeverity(severity: "low" | "medium" | "high" | "critical"): AnomalyDetectionResult[] {
+  getAnomaliesBySeverity(
+    severity: "low" | "medium" | "high" | "critical",
+  ): AnomalyDetectionResult[] {
     return this.results.filter((r) => r.severity === severity);
   }
 
@@ -484,8 +496,9 @@ export class AIDetectionEngine {
     if (typeof rule.pattern === "function") {
       return rule.pattern(incident, allIncidents);
     }
-    
-    const text = `${incident.observation} ${incident.technical} ${incident.classification}`.toLowerCase();
+
+    const text =
+      `${incident.observation} ${incident.technical} ${incident.classification}`.toLowerCase();
     return rule.pattern.test(text);
   }
 
@@ -493,7 +506,7 @@ export class AIDetectionEngine {
     if (typeof rule.pattern === "function") {
       return rule.pattern(signal);
     }
-    
+
     const text = JSON.stringify(signal).toLowerCase();
     return rule.pattern.test(text);
   }
@@ -535,7 +548,7 @@ export class AIDetectionEngine {
 
   private analyzeCorrelations(incidents: Incident[]): AnomalyDetectionResult[] {
     const results: AnomalyDetectionResult[] = [];
-    
+
     // Check for temporal clustering
     const now = Date.now();
     const recentIncidents = incidents.filter((i) => {
@@ -552,7 +565,9 @@ export class AIDetectionEngine {
         confidence: 0.9,
         description: `Temporal clustering: ${recentIncidents.length} incidents in the last hour`,
         severity: "high",
-        recommendations: ["Multiple incidents in short timeframe may indicate coordinated activity. Investigate patterns."],
+        recommendations: [
+          "Multiple incidents in short timeframe may indicate coordinated activity. Investigate patterns.",
+        ],
         legalImplications: ["ICCPR Art. 17 - Privacy Protection"],
       });
     }
@@ -576,7 +591,9 @@ export class AIDetectionEngine {
         confidence: 0.85,
         description: `Multi-category activity: ${categoriesUsed.size} different signal types observed`,
         severity: "high",
-        recommendations: ["Diverse signal types may indicate comprehensive surveillance. Review all categories."],
+        recommendations: [
+          "Diverse signal types may indicate comprehensive surveillance. Review all categories.",
+        ],
         legalImplications: ["UDHR Art. 12 - Privacy Protection", "GDPR Art. 5 - Data Minimisation"],
       });
     }
@@ -591,10 +608,14 @@ export const aiDetectionEngine = new AIDetectionEngine();
 // Utility functions
 export function getAnomalySeverityColor(severity: string): string {
   switch (severity) {
-    case "critical": return "text-red-500";
-    case "high": return "text-orange-500";
-    case "medium": return "text-yellow-500";
-    default: return "text-blue-500";
+    case "critical":
+      return "text-red-500";
+    case "high":
+      return "text-orange-500";
+    case "medium":
+      return "text-yellow-500";
+    default:
+      return "text-blue-500";
   }
 }
 

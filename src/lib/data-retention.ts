@@ -211,11 +211,11 @@ export class RetentionEngine {
       const auditLogs = getAuditLogs();
       report.auditLogsProcessed = auditLogs.length;
 
-      const { archived: archivedLogs, deleted: deletedLogs, spaceSaved: spaceSavedLogs } = this.processItems(
-        auditLogs,
-        "auditLogs",
-        dryRun,
-      );
+      const {
+        archived: archivedLogs,
+        deleted: deletedLogs,
+        spaceSaved: spaceSavedLogs,
+      } = this.processItems(auditLogs, "auditLogs", dryRun);
 
       report.auditLogsArchived += archivedLogs;
       report.auditLogsDeleted += deletedLogs;
@@ -226,13 +226,13 @@ export class RetentionEngine {
         if (processedIncidents.length !== incidents.length) {
           setEvidence(processedIncidents);
         }
-        
+
         const processedAuditLogs = auditLogs.filter((log) => {
           const shouldArchive = this.shouldArchive(log, "auditLogs");
           const shouldDelete = this.shouldDelete(log, "auditLogs");
           return !shouldArchive && !shouldDelete;
         });
-        
+
         if (processedAuditLogs.length !== auditLogs.length) {
           setAuditLogs(processedAuditLogs);
         }
@@ -241,9 +241,10 @@ export class RetentionEngine {
       }
 
       report.policiesApplied = this.config.policies.length;
-
     } catch (error) {
-      report.errors.push(`Cleanup failed: ${error instanceof Error ? error.message : String(error)}`);
+      report.errors.push(
+        `Cleanup failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
 
     return report;
@@ -270,17 +271,22 @@ export class RetentionEngine {
 
     // Check maximum count
     const allItems = type === "incidents" ? getEvidence() : getAuditLogs();
-    if (allItems.length > (type === "incidents" ? this.config.maxIncidents : this.config.maxAuditLogs)) {
+    if (
+      allItems.length > (type === "incidents" ? this.config.maxIncidents : this.config.maxAuditLogs)
+    ) {
       // Archive oldest items
-      const sorted = [...allItems].sort((a, b) => 
-        new Date((a as Incident).timestamp || (a as AuditLog).timestamp).getTime() -
-        new Date((b as Incident).timestamp || (b as AuditLog).timestamp).getTime()
+      const sorted = [...allItems].sort(
+        (a, b) =>
+          new Date((a as Incident).timestamp || (a as AuditLog).timestamp).getTime() -
+          new Date((b as Incident).timestamp || (b as AuditLog).timestamp).getTime(),
       );
-      const index = sorted.findIndex((i) => 
-        (i as Incident).id === (item as Incident).id || 
-        (i as AuditLog).id === (item as AuditLog).id
+      const index = sorted.findIndex(
+        (i) =>
+          (i as Incident).id === (item as Incident).id ||
+          (i as AuditLog).id === (item as AuditLog).id,
       );
-      if (index < sorted.length * 0.2) { // Archive oldest 20%
+      if (index < sorted.length * 0.2) {
+        // Archive oldest 20%
         return true;
       }
     }
@@ -341,7 +347,10 @@ export class RetentionEngine {
   }
 
   // Get retention report for an item
-  getRetentionStatus(item: Incident | AuditLog, type: "incidents" | "auditLogs"): {
+  getRetentionStatus(
+    item: Incident | AuditLog,
+    type: "incidents" | "auditLogs",
+  ): {
     shouldArchive: boolean;
     shouldDelete: boolean;
     daysOld: number;
@@ -351,9 +360,8 @@ export class RetentionEngine {
     const itemDate = new Date((item as Incident).timestamp || (item as AuditLog).timestamp);
     const daysOld = (now.getTime() - itemDate.getTime()) / (1000 * 60 * 60 * 24);
 
-    const applicablePolicies = this.config.policies.filter((policy) => 
-      policy.appliesTo.includes(type) && 
-      this.itemMatchesPolicy(item, policy)
+    const applicablePolicies = this.config.policies.filter(
+      (policy) => policy.appliesTo.includes(type) && this.itemMatchesPolicy(item, policy),
     );
 
     return {
@@ -376,7 +384,9 @@ export class RetentionEngine {
 
   // Restore archived incident
   restoreIncident(archivedId: string): Incident | null {
-    const index = this.archivedIncidents.findIndex((i) => i.id === archivedId || i.originalId === archivedId);
+    const index = this.archivedIncidents.findIndex(
+      (i) => i.id === archivedId || i.originalId === archivedId,
+    );
     if (index === -1) return null;
 
     const [archived] = this.archivedIncidents.splice(index, 1);
@@ -401,7 +411,9 @@ export class RetentionEngine {
 
   // Restore archived audit log
   restoreAuditLog(archivedId: string): AuditLog | null {
-    const index = this.archivedAuditLogs.findIndex((i) => i.id === archivedId || i.originalId === archivedId);
+    const index = this.archivedAuditLogs.findIndex(
+      (i) => i.id === archivedId || i.originalId === archivedId,
+    );
     if (index === -1) return null;
 
     const [archived] = this.archivedAuditLogs.splice(index, 1);
@@ -426,7 +438,9 @@ export class RetentionEngine {
 
   // Delete archived incident permanently
   deleteArchivedIncident(archivedId: string): boolean {
-    const index = this.archivedIncidents.findIndex((i) => i.id === archivedId || i.originalId === archivedId);
+    const index = this.archivedIncidents.findIndex(
+      (i) => i.id === archivedId || i.originalId === archivedId,
+    );
     if (index === -1) return false;
 
     this.archivedIncidents.splice(index, 1);
@@ -437,7 +451,9 @@ export class RetentionEngine {
 
   // Delete archived audit log permanently
   deleteArchivedAuditLog(archivedId: string): boolean {
-    const index = this.archivedAuditLogs.findIndex((i) => i.id === archivedId || i.originalId === archivedId);
+    const index = this.archivedAuditLogs.findIndex(
+      (i) => i.id === archivedId || i.originalId === archivedId,
+    );
     if (index === -1) return false;
 
     this.archivedAuditLogs.splice(index, 1);
@@ -468,7 +484,7 @@ export class RetentionEngine {
       archivedIncidents: this.archivedIncidents.length,
       archivedAuditLogs: this.archivedAuditLogs.length,
       storageUsed: incidents.length * incidentSize + auditLogs.length * logSize,
-      storageEstimate: 
+      storageEstimate:
         (incidents.length + this.archivedIncidents.length) * incidentSize +
         (auditLogs.length + this.archivedAuditLogs.length) * logSize,
     };
@@ -500,7 +516,7 @@ export class RetentionEngine {
       if (this.shouldDelete(log, "auditLogs")) wouldDelete++;
     }
 
-    spaceWouldSave = wouldDelete * (incidentSize + logSize) / 2;
+    spaceWouldSave = (wouldDelete * (incidentSize + logSize)) / 2;
 
     return { wouldArchive, wouldDelete, spaceWouldSave };
   }
@@ -567,7 +583,11 @@ export class RetentionEngine {
         if (!dryRun) {
           // Don't add to processed
           if (type === "incidents") {
-            logAudit("DELETE", "INFO", `Retention cleanup: Deleted ${type} ${(item as Incident).id}`);
+            logAudit(
+              "DELETE",
+              "INFO",
+              `Retention cleanup: Deleted ${type} ${(item as Incident).id}`,
+            );
           }
         }
       } else if (shouldArchive) {
@@ -604,7 +624,10 @@ export class RetentionEngine {
     // Check classification
     if (policy.conditions.classification) {
       const itemClassification = (inc.classification || "").toLowerCase();
-      if (!policy.conditions.classification.some((c) => itemClassification.includes(c.toLowerCase()))) return false;
+      if (
+        !policy.conditions.classification.some((c) => itemClassification.includes(c.toLowerCase()))
+      )
+        return false;
     }
 
     // Check status
@@ -619,12 +642,12 @@ export class RetentionEngine {
   private loadArchives(): void {
     try {
       const archivedIncidents = JSON.parse(
-        localStorage.getItem("sentinel_archived_incidents") || "[]"
+        localStorage.getItem("sentinel_archived_incidents") || "[]",
       ) as ArchivedIncident[];
       this.archivedIncidents = archivedIncidents.filter((i) => i.archivedAt);
 
       const archivedAuditLogs = JSON.parse(
-        localStorage.getItem("sentinel_archived_audit_logs") || "[]"
+        localStorage.getItem("sentinel_archived_audit_logs") || "[]",
       ) as ArchivedAuditLog[];
       this.archivedAuditLogs = archivedAuditLogs.filter((l) => l.archivedAt);
     } catch {
@@ -635,14 +658,8 @@ export class RetentionEngine {
 
   private saveArchives(): void {
     try {
-      localStorage.setItem(
-        "sentinel_archived_incidents",
-        JSON.stringify(this.archivedIncidents)
-      );
-      localStorage.setItem(
-        "sentinel_archived_audit_logs",
-        JSON.stringify(this.archivedAuditLogs)
-      );
+      localStorage.setItem("sentinel_archived_incidents", JSON.stringify(this.archivedIncidents));
+      localStorage.setItem("sentinel_archived_audit_logs", JSON.stringify(this.archivedAuditLogs));
     } catch {
       // Storage full or other error
     }

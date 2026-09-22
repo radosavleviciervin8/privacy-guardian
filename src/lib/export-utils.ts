@@ -34,8 +34,13 @@ export function exportToJSON(
   options: Partial<ExportOptions> = {},
 ): ExportResult {
   try {
-    const { includeMetadata = true, includeLegalNotices = true, filename, includeSensitiveData = true } = options;
-    
+    const {
+      includeMetadata = true,
+      includeLegalNotices = true,
+      filename,
+      includeSensitiveData = true,
+    } = options;
+
     const exportData: Record<string, unknown> = {
       version: "2.0",
       exportedAt: new Date().toISOString(),
@@ -58,15 +63,16 @@ export function exportToJSON(
       exportData.legalNotices = {
         copyright: "© Ervin Remus Radosavlevici. All rights reserved.",
         confidentiality: "This export contains confidential information subject to NDA.",
-        disclaimer: "Records are observations, not proof of wrongdoing. Independent verification required.",
+        disclaimer:
+          "Records are observations, not proof of wrongdoing. Independent verification required.",
         humanRights: "Complies with UDHR Art. 12, ICCPR Art. 17, ECHR Art. 8, GDPR principles.",
         jurisdiction: "Subject to international human rights law and applicable local laws.",
       };
     }
 
     // Filter sensitive data if requested
-    const exportIncidents = includeSensitiveData 
-      ? incidents 
+    const exportIncidents = includeSensitiveData
+      ? incidents
       : incidents.map((incident) => ({
           ...incident,
           observation: incident.observation ? "[REDACTED]" : "",
@@ -88,7 +94,8 @@ export function exportToJSON(
 
     const jsonString = JSON.stringify(exportData, null, 2);
     const blob = new Blob([jsonString], { type: "application/json" });
-    const finalFilename = filename || `NDA-evidence-${new Date().toISOString().slice(0, 10)}-${Date.now()}.json`;
+    const finalFilename =
+      filename || `NDA-evidence-${new Date().toISOString().slice(0, 10)}-${Date.now()}.json`;
 
     return {
       success: true,
@@ -116,7 +123,7 @@ export function exportToCSV(
 ): ExportResult {
   try {
     const { filename, includeSensitiveData = true } = options;
-    
+
     // Create CSV header
     const headers = [
       "ID",
@@ -137,8 +144,8 @@ export function exportToCSV(
         incident.id || "",
         incident.timestamp || "",
         incident.classification || "",
-        includeSensitiveData ? (incident.observation || "") : "[REDACTED]",
-        includeSensitiveData ? (incident.technical || "") : "[REDACTED]",
+        includeSensitiveData ? incident.observation || "" : "[REDACTED]",
+        includeSensitiveData ? incident.technical || "" : "[REDACTED]",
         this.formatCategories(incident.categories),
         incident.sensitivity || "",
         incident.status || "",
@@ -169,7 +176,8 @@ export function exportToCSV(
 
     const finalContent = [...metadataLines, csvContent].join("\n");
     const blob = new Blob([finalContent], { type: "text/csv;charset=utf-8;" });
-    const finalFilename = filename || `NDA-evidence-${new Date().toISOString().slice(0, 10)}-${Date.now()}.csv`;
+    const finalFilename =
+      filename || `NDA-evidence-${new Date().toISOString().slice(0, 10)}-${Date.now()}.csv`;
 
     return {
       success: true,
@@ -197,14 +205,14 @@ export function exportToTXT(
 ): ExportResult {
   try {
     const { filename, includeSensitiveData = true, includeLegalNotices = true } = options;
-    
+
     const lines: string[] = [];
 
     // Add header
-    lines.push("=" .repeat(80));
+    lines.push("=".repeat(80));
     lines.push("NDA MULTI-SIGNAL DEFENSIVE PROTECTION & EVIDENCE REGISTRY");
     lines.push("© Ervin Remus Radosavlevici — Private License / NDA");
-    lines.push("=" .repeat(80));
+    lines.push("=".repeat(80));
     lines.push("");
 
     // Add metadata
@@ -215,18 +223,22 @@ export function exportToTXT(
 
     if (includeLegalNotices) {
       lines.push("LEGAL NOTICES:");
-      lines.push("-" .repeat(80));
-      lines.push("1. This document contains confidential information protected by NDA and copyright.");
+      lines.push("-".repeat(80));
+      lines.push(
+        "1. This document contains confidential information protected by NDA and copyright.",
+      );
       lines.push("2. Unauthorized disclosure is strictly prohibited.");
       lines.push("3. Records are observations, not proof of wrongdoing.");
       lines.push("4. Independent verification by qualified experts is required.");
-      lines.push("5. Subject to international human rights law (UDHR Art. 12, ICCPR Art. 17, ECHR Art. 8).");
+      lines.push(
+        "5. Subject to international human rights law (UDHR Art. 12, ICCPR Art. 17, ECHR Art. 8).",
+      );
       lines.push("");
     }
 
     // Add incidents
     lines.push("INCIDENTS:");
-    lines.push("-" .repeat(80));
+    lines.push("-".repeat(80));
 
     for (const incident of incidents) {
       lines.push("");
@@ -246,16 +258,17 @@ export function exportToTXT(
       lines.push(this.formatCategories(incident.categories));
       lines.push("");
       lines.push(`Hash: ${incident.hash || "N/A"}`);
-      lines.push("-" .repeat(80));
+      lines.push("-".repeat(80));
     }
 
     lines.push("");
     lines.push("END OF EXPORT");
-    lines.push("=" .repeat(80));
+    lines.push("=".repeat(80));
 
     const content = lines.join("\n");
     const blob = new Blob([content], { type: "text/plain;charset=utf-8;" });
-    const finalFilename = filename || `NDA-evidence-${new Date().toISOString().slice(0, 10)}-${Date.now()}.txt`;
+    const finalFilename =
+      filename || `NDA-evidence-${new Date().toISOString().slice(0, 10)}-${Date.now()}.txt`;
 
     return {
       success: true,
@@ -284,13 +297,14 @@ export function exportSentinelReport(
 ): ExportResult {
   try {
     const { filename } = options;
-    
+
     const reportText = formatReport(report);
     const logsText = formatInterferenceLog(interferenceLogs as any[]);
-    
+
     const content = `${reportText}\n\n${logsText}`;
     const blob = new Blob([content], { type: "text/plain;charset=utf-8;" });
-    const finalFilename = filename || `NDA-sentinel-report-${new Date().toISOString().slice(0, 10)}-${Date.now()}.txt`;
+    const finalFilename =
+      filename || `NDA-sentinel-report-${new Date().toISOString().slice(0, 10)}-${Date.now()}.txt`;
 
     return {
       success: true,
@@ -318,10 +332,11 @@ export function exportAuditReport(
 ): ExportResult {
   try {
     const { filename } = options;
-    
+
     const reportText = formatAuditReport(report);
     const blob = new Blob([reportText], { type: "text/plain;charset=utf-8;" });
-    const finalFilename = filename || `NDA-audit-report-${new Date().toISOString().slice(0, 10)}-${Date.now()}.txt`;
+    const finalFilename =
+      filename || `NDA-audit-report-${new Date().toISOString().slice(0, 10)}-${Date.now()}.txt`;
 
     return {
       success: true,
@@ -349,7 +364,7 @@ export function exportAnomalyResults(
 ): ExportResult {
   try {
     const { filename } = options;
-    
+
     const lines: string[] = [
       "ANOMALY DETECTION REPORT",
       "© Ervin Remus Radosavlevici — Private License / NDA",
@@ -378,7 +393,8 @@ export function exportAnomalyResults(
 
     const content = lines.join("\n");
     const blob = new Blob([content], { type: "text/plain;charset=utf-8;" });
-    const finalFilename = filename || `NDA-anomaly-report-${new Date().toISOString().slice(0, 10)}-${Date.now()}.txt`;
+    const finalFilename =
+      filename || `NDA-anomaly-report-${new Date().toISOString().slice(0, 10)}-${Date.now()}.txt`;
 
     return {
       success: true,
@@ -406,7 +422,7 @@ export function exportThreatReport(
 ): ExportResult {
   try {
     const { filename } = options;
-    
+
     const lines: string[] = [
       "THREAT INTELLIGENCE REPORT",
       "© Ervin Remus Radosavlevici — Private License / NDA",
@@ -434,13 +450,14 @@ export function exportThreatReport(
       lines.push("");
       lines.push("Legal Implications:");
       report.legalImplications.forEach((imp) => lines.push(`  - ${imp}`));
-      lines.push("-" .repeat(80));
+      lines.push("-".repeat(80));
       lines.push("");
     }
 
     const content = lines.join("\n");
     const blob = new Blob([content], { type: "text/plain;charset=utf-8;" });
-    const finalFilename = filename || `NDA-threat-report-${new Date().toISOString().slice(0, 10)}-${Date.now()}.txt`;
+    const finalFilename =
+      filename || `NDA-threat-report-${new Date().toISOString().slice(0, 10)}-${Date.now()}.txt`;
 
     return {
       success: true,
@@ -470,34 +487,42 @@ export function exportData(
 ): ExportResult {
   switch (type) {
     case "incidents":
-      if (!Array.isArray(data)) return { success: false, error: "Invalid data for incidents export" };
+      if (!Array.isArray(data))
+        return { success: false, error: "Invalid data for incidents export" };
       switch (format) {
-        case "json": return exportToJSON(data as Incident[], options);
-        case "csv": return exportToCSV(data as Incident[], options);
-        case "txt": return exportToTXT(data as Incident[], options);
-        default: return exportToJSON(data as Incident[], options);
+        case "json":
+          return exportToJSON(data as Incident[], options);
+        case "csv":
+          return exportToCSV(data as Incident[], options);
+        case "txt":
+          return exportToTXT(data as Incident[], options);
+        default:
+          return exportToJSON(data as Incident[], options);
       }
-    
+
     case "sentinel":
-      if (!data || typeof data !== "object") return { success: false, error: "Invalid data for sentinel export" };
+      if (!data || typeof data !== "object")
+        return { success: false, error: "Invalid data for sentinel export" };
       return exportSentinelReport(
         (data as { report: SentinelReport }).report,
         (data as { interferenceLogs: unknown[] }).interferenceLogs,
         options,
       );
-    
+
     case "audit":
-      if (!data || typeof data !== "object") return { success: false, error: "Invalid data for audit export" };
+      if (!data || typeof data !== "object")
+        return { success: false, error: "Invalid data for audit export" };
       return exportAuditReport(data as AuditReport, options);
-    
+
     case "anomalies":
-      if (!Array.isArray(data)) return { success: false, error: "Invalid data for anomalies export" };
+      if (!Array.isArray(data))
+        return { success: false, error: "Invalid data for anomalies export" };
       return exportAnomalyResults(data as AnomalyDetectionResult[], options);
-    
+
     case "threats":
       if (!Array.isArray(data)) return { success: false, error: "Invalid data for threats export" };
       return exportThreatReport(data as ThreatReport[], options);
-    
+
     default:
       return { success: false, error: `Unknown export type: ${type}` };
   }
@@ -546,10 +571,10 @@ function countCategories(incidents: Incident[]): Record<string, number> {
 
 function getDateRange(incidents: Incident[]): { earliest?: string; latest?: string } {
   if (incidents.length === 0) return {};
-  
+
   const timestamps = incidents.map((i) => i.timestamp).filter(Boolean) as string[];
   if (timestamps.length === 0) return {};
-  
+
   const sorted = [...timestamps].sort();
   return {
     earliest: sorted[0],
@@ -567,13 +592,13 @@ function formatCategories(categories: Record<string, boolean> | undefined): stri
 
 function escapeCSV(value: string): string {
   if (value === undefined || value === null) return "";
-  
+
   const stringValue = String(value);
-  
+
   // If the value contains quotes, comma, or newline, wrap in quotes and escape internal quotes
   if (stringValue.includes('"') || stringValue.includes(",") || stringValue.includes("\n")) {
     return `"${stringValue.replace(/"/g, '""')}"`;
   }
-  
+
   return stringValue;
 }

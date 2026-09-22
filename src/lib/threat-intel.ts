@@ -353,15 +353,21 @@ export class ThreatIntelEngine {
     const recommendations: string[] = [];
     const legalImplications: string[] = [];
 
-    const text = `${incident.observation} ${incident.technical} ${incident.classification}`.toLowerCase();
+    const text =
+      `${incident.observation} ${incident.technical} ${incident.classification}`.toLowerCase();
 
     for (const indicator of this.indicators) {
       const match = this.testIndicator(incident, indicator, text);
       if (match) {
         matchingIndicators.push(indicator);
-        threatScore += indicator.severity === "critical" ? 40 : 
-                      indicator.severity === "high" ? 30 :
-                      indicator.severity === "medium" ? 20 : 10;
+        threatScore +=
+          indicator.severity === "critical"
+            ? 40
+            : indicator.severity === "high"
+              ? 30
+              : indicator.severity === "medium"
+                ? 20
+                : 10;
         recommendations.push(indicator.mitigation);
         legalImplications.push(...indicator.references);
       }
@@ -470,7 +476,7 @@ export class ThreatIntelEngine {
   async updateIndicators(): Promise<{ updated: number; new: number; removed: number }> {
     // Simulate update - in real implementation would fetch from external feeds
     const beforeCount = this.indicators.length;
-    
+
     // Add some "new" indicators for demonstration
     const newIndicators: ThreatIndicator[] = [
       {
@@ -509,11 +515,12 @@ export class ThreatIntelEngine {
   private testIndicator(incident: Incident, indicator: ThreatIndicator, text: string): boolean {
     // Check if indicator categories match incident categories
     const categoryMatch = indicator.categories.some((cat) => incident.categories?.[cat]);
-    
+
     // Check text patterns
-    const textMatch = text.includes(indicator.name.toLowerCase()) ||
-                     text.includes(indicator.description.toLowerCase()) ||
-                     indicator.references.some((ref) => text.includes(ref.toLowerCase()));
+    const textMatch =
+      text.includes(indicator.name.toLowerCase()) ||
+      text.includes(indicator.description.toLowerCase()) ||
+      indicator.references.some((ref) => text.includes(ref.toLowerCase()));
 
     return categoryMatch || textMatch;
   }
@@ -541,9 +548,10 @@ export class ThreatIntelEngine {
       severityCounts[indicator.severity]++;
     }
 
-    const severity = Object.entries(severityCounts)
-      .filter(([_, count]) => count > 0)
-      .sort((a, b) => b[1] - a[1])[0]?.[0] || "low";
+    const severity =
+      Object.entries(severityCounts)
+        .filter(([_, count]) => count > 0)
+        .sort((a, b) => b[1] - a[1])[0]?.[0] || "low";
 
     return `Threat analysis: ${indicators.length} indicator(s) matched (${severity} severity) for incident ${incident.id}`;
   }
@@ -561,10 +569,14 @@ export const threatIntelEngine = new ThreatIntelEngine();
 // Threat indicator utilities
 export function getThreatSeverityColor(severity: string): string {
   switch (severity) {
-    case "critical": return "bg-red-500 text-white";
-    case "high": return "bg-orange-500 text-white";
-    case "medium": return "bg-yellow-500 text-black";
-    default: return "bg-blue-500 text-white";
+    case "critical":
+      return "bg-red-500 text-white";
+    case "high":
+      return "bg-orange-500 text-white";
+    case "medium":
+      return "bg-yellow-500 text-black";
+    default:
+      return "bg-blue-500 text-white";
   }
 }
 
