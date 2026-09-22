@@ -61,3 +61,4 @@ Please read [SECURITY.md](./SECURITY.md) before deploying or reporting an issue.
 ---
 
 _This README and the in-app notices record attribution and provenance. They do not by themselves create a copyright registration, an enforceable NDA against third parties who have not signed it, or any legal finding against another person._
+what me can do  if scammers do bacdates to my repository  they are idiots  I need help stop cracheds addicted to my life
