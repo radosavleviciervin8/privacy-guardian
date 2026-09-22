@@ -1,29 +1,64 @@
-# Welcome to your Lovable project
+# 🛡 NDA Multi-Signal Defensive Protection & Evidence Registry
 
-This project was built with [Lovable](https://lovable.dev).
+**Copyright © Ervin Remus Radosavlevici. All rights reserved.**
+**Private License — Confidential — Subject to NDA.** See [LICENSE](./LICENSE), [NDA.md](./NDA.md), [SECURITY.md](./SECURITY.md) and [ETHICS.md](./ETHICS.md).
 
-## Build with Lovable
+A browser-based, **local-first, non-jamming** defensive evidence and privacy registry for recording observable events involving Bluetooth, RF-related observations, infrared observations, vibration/audio observations, mobile devices, drones and other possible technical incidents.
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+## What it does
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+- Records **timestamped observations** with an event classification and optional technical reference.
+- Computes a **SHA-256 integrity hash** for every record (Web Crypto).
+- Stores everything **only in the user's own browser** (localStorage). Nothing is uploaded.
+- Exports the full registry as **JSON** for independent review.
+- Lets the user **delete** all local evidence at any time.
+- Optionally reads a **Bluetooth device name** the user voluntarily exposes via Web Bluetooth.
+- Reports which browser sensor APIs are available (capability report only — nothing is activated silently).
 
-## Development
+## What it does NOT do
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+- ❌ No jamming, interference, hacking or remote control of any equipment.
+- ❌ No covert microphone or camera recording.
+- ❌ No automatic identification or accusation of any person.
+- ❌ No background data collection or transmission.
+
+Records are labelled as _observations_, never as proof of wrongdoing.
+
+## Legal & ethical framework
+
+The registry follows the principles of **necessity, proportionality and transparency** drawn from international human-rights law:
+
+- Universal Declaration of Human Rights, Art. 12 (privacy)
+- International Covenant on Civil and Political Rights, Art. 17
+- European Convention on Human Rights, Art. 8
+- UN Guiding Principles on Business and Human Rights
+
+Full detail in [ETHICS.md](./ETHICS.md).
+
+## Provenance
+
+| Field              | Value                                                     |
+| ------------------ | --------------------------------------------------------- |
+| Author / copyright | Ervin Remus Radosavlevici                                 |
+| Project            | NDA Multi-Signal Defensive Protection & Evidence Registry |
+| License            | Private License (see LICENSE)                             |
+| Confidentiality    | NDA (see NDA.md)                                          |
+| Storage key        | `ervin_ndamultisignal_evidence_v1`                        |
+
+## Running locally
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+bun install
+bun run dev
 ```
 
-## Built with
+Built with TanStack Start, React 19 and Tailwind CSS v4. The app is fully client-side; no backend or account is required.
 
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
+## Security
+
+Please read [SECURITY.md](./SECURITY.md) before deploying or reporting an issue. Do not publish vulnerability details publicly — contact the copyright holder privately.
+
+---
+
+_This README and the in-app notices record attribution and provenance. They do not by themselves create a copyright registration, an enforceable NDA against third parties who have not signed it, or any legal finding against another person._
+what me can do  if scammers do bacdates to my repository  they are idiots  I need help stop cracheds addicted to my life
