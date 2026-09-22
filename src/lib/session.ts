@@ -599,7 +599,15 @@ export class SessionManager {
     }
 
     this.saveToStorage();
-    logAudit("CREATE", event.severity.toUpperCase() as "INFO", JSON.stringify(event));
+    const auditSeverity =
+      event.severity === "critical"
+        ? "CRITICAL"
+        : event.severity === "high"
+          ? "ERROR"
+          : event.severity === "medium"
+            ? "WARNING"
+            : "INFO";
+    logAudit("CREATE", auditSeverity, JSON.stringify(event));
   }
 }
 
