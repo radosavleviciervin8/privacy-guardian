@@ -22,7 +22,7 @@ A browser-based, **local-first, non-jamming** defensive evidence and privacy reg
 - ❌ No automatic identification or accusation of any person.
 - ❌ No background data collection or transmission.
 
-Records are labelled as *observations*, never as proof of wrongdoing.
+Records are labelled as _observations_, never as proof of wrongdoing.
 
 ## Legal & ethical framework
 
@@ -37,13 +37,13 @@ Full detail in [ETHICS.md](./ETHICS.md).
 
 ## Provenance
 
-| Field | Value |
-|---|---|
-| Author / copyright | Ervin Remus Radosavlevici |
-| Project | NDA Multi-Signal Defensive Protection & Evidence Registry |
-| License | Private License (see LICENSE) |
-| Confidentiality | NDA (see NDA.md) |
-| Storage key | `ervin_ndamultisignal_evidence_v1` |
+| Field              | Value                                                     |
+| ------------------ | --------------------------------------------------------- |
+| Author / copyright | Ervin Remus Radosavlevici                                 |
+| Project            | NDA Multi-Signal Defensive Protection & Evidence Registry |
+| License            | Private License (see LICENSE)                             |
+| Confidentiality    | NDA (see NDA.md)                                          |
+| Storage key        | `ervin_ndamultisignal_evidence_v1`                        |
 
 ## Running locally
 
@@ -60,4 +60,4 @@ Please read [SECURITY.md](./SECURITY.md) before deploying or reporting an issue.
 
 ---
 
-*This README and the in-app notices record attribution and provenance. They do not by themselves create a copyright registration, an enforceable NDA against third parties who have not signed it, or any legal finding against another person.*
+_This README and the in-app notices record attribution and provenance. They do not by themselves create a copyright registration, an enforceable NDA against third parties who have not signed it, or any legal finding against another person._

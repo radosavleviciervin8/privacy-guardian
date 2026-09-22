@@ -885,21 +885,24 @@ export const SAFEGUARD_GROUPS: SafeguardGroup[] = [
       },
       {
         id: "udhr_art_5",
-        description: "No one shall be subjected to torture or cruel, inhuman or degrading treatment",
+        description:
+          "No one shall be subjected to torture or cruel, inhuman or degrading treatment",
         lawReference: "UDHR Article 5",
         technicalImplementation: "No capabilities that could facilitate abuse",
         priority: "critical",
       },
       {
         id: "udhr_art_7",
-        description: "All are equal before the law and are entitled without discrimination to equal protection",
+        description:
+          "All are equal before the law and are entitled without discrimination to equal protection",
         lawReference: "UDHR Article 7",
         technicalImplementation: "Equal protection of all users' data",
         priority: "critical",
       },
       {
         id: "udhr_art_8",
-        description: "Everyone has the right to an effective remedy by competent national tribunals",
+        description:
+          "Everyone has the right to an effective remedy by competent national tribunals",
         lawReference: "UDHR Article 8",
         technicalImplementation: "Evidence export for legal proceedings",
         priority: "high",
@@ -920,7 +923,8 @@ export const SAFEGUARD_GROUPS: SafeguardGroup[] = [
       },
       {
         id: "udhr_art_11",
-        description: "Everyone charged with a penal offence has the right to be presumed innocent until proved guilty",
+        description:
+          "Everyone charged with a penal offence has the right to be presumed innocent until proved guilty",
         lawReference: "UDHR Article 11",
         technicalImplementation: "Presumption of innocence in all classifications",
         priority: "critical",
@@ -934,7 +938,8 @@ export const SAFEGUARD_GROUPS: SafeguardGroup[] = [
       },
       {
         id: "udhr_art_17",
-        description: "Everyone has the right to own property alone as well as in association with others",
+        description:
+          "Everyone has the right to own property alone as well as in association with others",
         lawReference: "UDHR Article 17",
         technicalImplementation: "User owns their data",
         priority: "high",
@@ -976,7 +981,8 @@ export const SAFEGUARD_GROUPS: SafeguardGroup[] = [
       },
       {
         id: "udhr_art_25",
-        description: "Everyone has the right to a standard of living adequate for health and well-being",
+        description:
+          "Everyone has the right to a standard of living adequate for health and well-being",
         lawReference: "UDHR Article 25",
         technicalImplementation: "No interference with health and well-being",
         priority: "medium",
@@ -997,7 +1003,8 @@ export const SAFEGUARD_GROUPS: SafeguardGroup[] = [
       },
       {
         id: "udhr_art_28",
-        description: "Everyone is entitled to a social and international order in which rights can be fully realized",
+        description:
+          "Everyone is entitled to a social and international order in which rights can be fully realized",
         lawReference: "UDHR Article 28",
         technicalImplementation: "Design supports international human rights framework",
         priority: "medium",
@@ -1011,7 +1018,8 @@ export const SAFEGUARD_GROUPS: SafeguardGroup[] = [
       },
       {
         id: "udhr_art_30",
-        description: "Nothing in this Declaration may be interpreted as implying rights to engage in activities aimed at destruction of rights",
+        description:
+          "Nothing in this Declaration may be interpreted as implying rights to engage in activities aimed at destruction of rights",
         lawReference: "UDHR Article 30",
         technicalImplementation: "No capabilities that could destroy others' rights",
         priority: "critical",
@@ -1020,10 +1028,7 @@ export const SAFEGUARD_GROUPS: SafeguardGroup[] = [
   },
 ];
 
-export const SAFEGUARD_COUNT = SAFEGUARD_GROUPS.reduce(
-  (n, g) => n + g.items.length,
-  0,
-);
+export const SAFEGUARD_COUNT = SAFEGUARD_GROUPS.reduce((n, g) => n + g.items.length, 0);
 
 // Additional utility functions
 export function getSafeguardsByPriority(priority: SafeguardItem["priority"]): SafeguardItem[] {
@@ -1038,11 +1043,7 @@ export function getSafeguardsByLaw(law: string): SafeguardItem[] {
   const items: SafeguardItem[] = [];
   for (const group of SAFEGUARD_GROUPS) {
     items.push(
-      ...group.items.filter(
-        (item) =>
-          item.lawReference?.includes(law) ||
-          group.law.includes(law),
-      ),
+      ...group.items.filter((item) => item.lawReference?.includes(law) || group.law.includes(law)),
     );
   }
   return items;
@@ -1053,31 +1054,59 @@ export function getLegalFrameworks(): { name: string; description: string; artic
     {
       name: "Universal Declaration of Human Rights (UDHR)",
       description: "Foundational human rights document adopted by the UN General Assembly in 1948",
-      articles: ["1", "2", "3", "5", "7", "8", "9", "10", "11", "12", "17", "18", "19", "20", "21", "22", "25", "26", "27", "28", "29", "30"],
+      articles: [
+        "1",
+        "2",
+        "3",
+        "5",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+      ],
     },
     {
       name: "International Covenant on Civil and Political Rights (ICCPR)",
-      description: "Legally binding treaty that commits signatories to respect civil and political rights",
+      description:
+        "Legally binding treaty that commits signatories to respect civil and political rights",
       articles: ["1", "2", "14", "17", "19", "21", "22", "25", "26"],
     },
     {
       name: "International Covenant on Economic, Social and Cultural Rights (ICESCR)",
-      description: "Legally binding treaty that commits signatories to respect economic, social and cultural rights",
+      description:
+        "Legally binding treaty that commits signatories to respect economic, social and cultural rights",
       articles: ["2", "11", "12", "13", "15"],
     },
     {
       name: "European Convention on Human Rights (ECHR)",
-      description: "International treaty to protect human rights and fundamental freedoms in Europe",
+      description:
+        "International treaty to protect human rights and fundamental freedoms in Europe",
       articles: ["2", "3", "5", "6", "8", "9", "10", "11", "14", "17"],
     },
     {
       name: "General Data Protection Regulation (GDPR)",
-      description: "EU regulation on data protection and privacy for all individuals within the EU and EEA",
+      description:
+        "EU regulation on data protection and privacy for all individuals within the EU and EEA",
       articles: ["5", "6", "7", "9", "13", "14", "16", "17", "20", "22", "25", "30", "32"],
     },
     {
       name: "UN Guiding Principles on Business and Human Rights",
-      description: "Framework for preventing and addressing the risk of adverse impacts on human rights linked to business activity",
+      description:
+        "Framework for preventing and addressing the risk of adverse impacts on human rights linked to business activity",
       articles: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
     },
     {

@@ -4,7 +4,7 @@
 import { getEvidence, setEvidence, type Incident } from "./evidence";
 import { sha256 } from "./evidence";
 
-export type AuditAction = 
+export type AuditAction =
   | "CREATE"
   | "READ"
   | "UPDATE"
@@ -46,7 +46,9 @@ const AUDIT_STORAGE_KEY = "ervin_ndamultisignal_audit_v1";
 const MAX_AUDIT_LOGS = 1000;
 
 function generateId(): string {
-  return typeof crypto?.randomUUID === "function" ? crypto.randomUUID() : `audit-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  return typeof crypto?.randomUUID === "function"
+    ? crypto.randomUUID()
+    : `audit-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 }
 
 function getSessionId(): string {
@@ -169,28 +171,14 @@ export function auditDelete(incidentId: string): AuditLog {
 }
 
 export function auditExport(count: number): AuditLog {
-  return logAudit(
-    "EXPORT",
-    "INFO",
-    `Exported ${count} incident records`,
-    { recordCount: count },
-  );
+  return logAudit("EXPORT", "INFO", `Exported ${count} incident records`, { recordCount: count });
 }
 
 export function auditImport(count: number): AuditLog {
-  return logAudit(
-    "IMPORT",
-    "INFO",
-    `Imported ${count} incident records`,
-    { recordCount: count },
-  );
+  return logAudit("IMPORT", "INFO", `Imported ${count} incident records`, { recordCount: count });
 }
 
-export function auditScan(
-  verified: number,
-  repaired: number,
-  tampered: number,
-): AuditLog {
+export function auditScan(verified: number, repaired: number, tampered: number): AuditLog {
   return logAudit(
     "SCAN",
     tampered > 0 ? "CRITICAL" : repaired > 0 ? "WARNING" : "INFO",
@@ -200,21 +188,11 @@ export function auditScan(
 }
 
 export function auditBackup(size: number): AuditLog {
-  return logAudit(
-    "BACKUP",
-    "INFO",
-    `Created backup of ${size} records`,
-    { backupSize: size },
-  );
+  return logAudit("BACKUP", "INFO", `Created backup of ${size} records`, { backupSize: size });
 }
 
 export function auditRestore(size: number): AuditLog {
-  return logAudit(
-    "RESTORE",
-    "INFO",
-    `Restored ${size} records from backup`,
-    { restoreSize: size },
-  );
+  return logAudit("RESTORE", "INFO", `Restored ${size} records from backup`, { restoreSize: size });
 }
 
 export function auditEncryption(incidentId: string): AuditLog {
@@ -238,17 +216,12 @@ export function auditDecryption(incidentId: string): AuditLog {
 }
 
 export function auditError(error: Error, context: string): AuditLog {
-  return logAudit(
-    "ERROR",
-    "ERROR",
-    `Error in ${context}: ${error.message}`,
-    {
-      errorName: error.name,
-      errorMessage: error.message,
-      stack: error.stack,
-      context,
-    },
-  );
+  return logAudit("ERROR", "ERROR", `Error in ${context}: ${error.message}`, {
+    errorName: error.name,
+    errorMessage: error.message,
+    stack: error.stack,
+    context,
+  });
 }
 
 // Generate audit report
@@ -312,7 +285,9 @@ export function formatAuditReport(report: AuditReport): string {
     ...Object.entries(report.byAction).map(([action, count]) => `  ${action.padEnd(12)}: ${count}`),
     "",
     "By Severity:",
-    ...Object.entries(report.bySeverity).map(([severity, count]) => `  ${severity.padEnd(8)}: ${count}`),
+    ...Object.entries(report.bySeverity).map(
+      ([severity, count]) => `  ${severity.padEnd(8)}: ${count}`,
+    ),
     "",
     "Recent Logs:",
     ...report.recentLogs.map((log) => formatAuditLog(log)),
@@ -322,9 +297,7 @@ export function formatAuditReport(report: AuditReport): string {
 }
 
 // Continuous audit monitoring
-export function startAuditMonitoring(
-  callback: (log: AuditLog) => void,
-): { stop: () => void } {
+export function startAuditMonitoring(callback: (log: AuditLog) => void): { stop: () => void } {
   // In a real implementation, this would watch for changes
   // For now, we'll just provide a stop function
   return {
@@ -347,11 +320,12 @@ export function detectSuspiciousAuditPatterns(): { patterns: string[]; severity:
 
   // Check for rapid operations
   const recentLogs = logs.slice(-20);
-  const timeWindow = recentLogs.length > 0 
-    ? new Date(recentLogs[recentLogs.length - 1].timestamp).getTime() - 
-      new Date(recentLogs[0].timestamp).getTime()
-    : 0;
-  
+  const timeWindow =
+    recentLogs.length > 0
+      ? new Date(recentLogs[recentLogs.length - 1].timestamp).getTime() -
+        new Date(recentLogs[0].timestamp).getTime()
+      : 0;
+
   if (recentLogs.length >= 10 && timeWindow < 1000) {
     patterns.push(`Rapid operations detected (${recentLogs.length} in ${timeWindow}ms)`);
     severity = "WARNING";
@@ -394,7 +368,7 @@ export async function verifyAuditLogIntegrity(): Promise<{ valid: boolean; issue
   // Check for tampering
   for (let i = 0; i < logs.length; i++) {
     const log = logs[i];
-    
+
     // Check if log has all required fields
     if (!log.id || !log.timestamp || !log.action || !log.severity || !log.description) {
       issues.push(`Log at index ${i} is missing required fields`);
@@ -410,7 +384,7 @@ export async function verifyAuditLogIntegrity(): Promise<{ valid: boolean; issue
   for (let i = 1; i < logs.length; i++) {
     const prevTime = new Date(logs[i - 1].timestamp).getTime();
     const currTime = new Date(logs[i].timestamp).getTime();
-    
+
     if (currTime < prevTime) {
       issues.push(`Logs are out of chronological order at index ${i}`);
     }

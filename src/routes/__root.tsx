@@ -79,7 +79,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "color-scheme", content: "dark" },
       { name: "author", content: "Ervin Remus Radosavlevici" },
-      { name: "copyright", content: "© Ervin Remus Radosavlevici. All rights reserved. Private License / NDA." },
+      {
+        name: "copyright",
+        content: "© Ervin Remus Radosavlevici. All rights reserved. Private License / NDA.",
+      },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "NDA Multi-Signal Defensive Protection Registry" },
       { name: "twitter:card", content: "summary_large_image" },

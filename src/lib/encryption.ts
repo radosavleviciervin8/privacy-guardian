@@ -68,7 +68,8 @@ class SecureKeyStorage {
     try {
       const db = await this.dbPromise;
       return new Promise((resolve) => {
-        const request = db.transaction(this.STORE_NAME, "readonly")
+        const request = db
+          .transaction(this.STORE_NAME, "readonly")
           .objectStore(this.STORE_NAME)
           .get(keyId);
 
@@ -116,7 +117,8 @@ class SecureKeyStorage {
     try {
       const db = await this.dbPromise;
       return new Promise((resolve) => {
-        const request = db.transaction(this.STORE_NAME, "readonly")
+        const request = db
+          .transaction(this.STORE_NAME, "readonly")
           .objectStore(this.STORE_NAME)
           .getAll();
 
@@ -160,7 +162,7 @@ export async function deriveKeyFromPassword(
     passwordBuffer,
     { name: "PBKDF2" },
     false,
-    ["deriveKey"]
+    ["deriveKey"],
   );
 
   const key = await crypto.subtle.deriveKey(
@@ -173,7 +175,7 @@ export async function deriveKeyFromPassword(
     keyMaterial,
     { name: "AES-GCM", length: 256 },
     false,
-    ["encrypt", "decrypt"]
+    ["encrypt", "decrypt"],
   );
 
   return {
@@ -190,7 +192,7 @@ export async function generateEncryptionKey(): Promise<{ key: CryptoKey; keyId: 
       length: 256,
     },
     true,
-    ["encrypt", "decrypt"]
+    ["encrypt", "decrypt"],
   );
 
   const keyId = crypto.randomUUID();
@@ -224,7 +226,7 @@ export async function encryptData(
       iv,
     },
     key,
-    encodedData
+    encodedData,
   );
 
   return {
@@ -239,10 +241,7 @@ export async function encryptData(
 }
 
 // Decrypt data using AES-GCM
-export async function decryptData(
-  encrypted: EncryptedData,
-  key: CryptoKey,
-): Promise<string> {
+export async function decryptData(encrypted: EncryptedData, key: CryptoKey): Promise<string> {
   const iv = base64ToArrayBuffer(encrypted.iv);
   const ciphertext = base64ToArrayBuffer(encrypted.ciphertext);
 
@@ -252,7 +251,7 @@ export async function decryptData(
       iv,
     },
     key,
-    ciphertext
+    ciphertext,
   );
 
   const decoder = new TextDecoder();
@@ -303,12 +302,14 @@ export async function decryptIncident(
 ): Promise<Incident> {
   const decryptedIncident: Incident = {
     ...incident,
-    observation: typeof incident.observation === "string" 
-      ? incident.observation 
-      : await decryptData(incident.observation as EncryptedData, key),
-    technical: typeof incident.technical === "string" 
-      ? incident.technical 
-      : await decryptData(incident.technical as EncryptedData, key),
+    observation:
+      typeof incident.observation === "string"
+        ? incident.observation
+        : await decryptData(incident.observation as EncryptedData, key),
+    technical:
+      typeof incident.technical === "string"
+        ? incident.technical
+        : await decryptData(incident.technical as EncryptedData, key),
   };
 
   return decryptedIncident;
@@ -326,12 +327,7 @@ export function getEncryptedFields(incident: EncryptedIncident): string[] {
 
 // Helper functions for base64 encoding/decoding
 function arrayBufferToBase64(buffer: ArrayBuffer): string {
-  return btoa(
-    new Uint8Array(buffer).reduce(
-      (data, byte) => data + String.fromCharCode(byte),
-      "",
-    ),
-  );
+  return btoa(new Uint8Array(buffer).reduce((data, byte) => data + String.fromCharCode(byte), ""));
 }
 
 function base64ToArrayBuffer(base64: string): ArrayBuffer {
@@ -344,13 +340,10 @@ function base64ToArrayBuffer(base64: string): ArrayBuffer {
 }
 
 // Password-based encryption for user-provided passwords
-export async function encryptWithPassword(
-  data: string,
-  password: string,
-): Promise<EncryptedData> {
+export async function encryptWithPassword(data: string, password: string): Promise<EncryptedData> {
   const salt = crypto.getRandomValues(new Uint8Array(16));
   const { key } = await deriveKeyFromPassword(password, salt);
-  
+
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const encoder = new TextEncoder();
   const encodedData = encoder.encode(data);
@@ -361,7 +354,7 @@ export async function encryptWithPassword(
       iv,
     },
     key,
-    encodedData
+    encodedData,
   );
 
   return {
@@ -380,7 +373,7 @@ export async function decryptWithPassword(
 ): Promise<string> {
   const salt = base64ToArrayBuffer(encrypted.salt);
   const { key } = await deriveKeyFromPassword(password, new Uint8Array(salt));
-  
+
   const iv = base64ToArrayBuffer(encrypted.iv);
   const ciphertext = base64ToArrayBuffer(encrypted.ciphertext);
 
@@ -390,7 +383,7 @@ export async function decryptWithPassword(
       iv,
     },
     key,
-    ciphertext
+    ciphertext,
   );
 
   const decoder = new TextDecoder();
