@@ -35,38 +35,60 @@ export interface EncryptedIncident extends Omit<Incident, "observation" | "techn
 }
 
 // Key storage using IndexedDB (more secure than localStorage)
+// Falls back to in-memory storage if IndexedDB is not available
 class SecureKeyStorage {
   private dbPromise: Promise<IDBDatabase> | null = null;
   private readonly DB_NAME = "SentinelKeysDB";
   private readonly STORE_NAME = "encryptionKeys";
+  private inMemoryStore: Map<string, EncryptionKey> = new Map();
+  private useInMemory: boolean = false;
 
   constructor() {
     this.initDB();
   }
 
   private initDB(): void {
-    if (typeof indexedDB === "undefined") {
-      throw new Error("IndexedDB is not available");
+    // Check if IndexedDB is available
+    if (typeof indexedDB === "undefined" || !window?.indexedDB) {
+      // Fall back to in-memory storage
+      this.useInMemory = true;
+      return;
     }
 
-    this.dbPromise = new Promise((resolve, reject) => {
-      const request = indexedDB.open(this.DB_NAME, 1);
+    try {
+      this.dbPromise = new Promise((resolve, reject) => {
+        const request = indexedDB.open(this.DB_NAME, 1);
 
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve(request.result);
+        request.onerror = () => {
+          // If IndexedDB fails, fall back to in-memory
+          this.useInMemory = true;
+          resolve(null as unknown as IDBDatabase);
+        };
+        request.onsuccess = () => resolve(request.result);
 
-      request.onupgradeneeded = (event) => {
-        const db = request.result;
-        if (!db.objectStoreNames.contains(this.STORE_NAME)) {
-          db.createObjectStore(this.STORE_NAME, { keyPath: "id" });
-        }
-      };
-    });
+        request.onupgradeneeded = (event) => {
+          const db = request.result;
+          if (!db.objectStoreNames.contains(this.STORE_NAME)) {
+            db.createObjectStore(this.STORE_NAME, { keyPath: "id" });
+          }
+        };
+      });
+    } catch {
+      // If any error occurs, fall back to in-memory
+      this.useInMemory = true;
+    }
   }
 
   async getKey(keyId: string): Promise<CryptoKey | null> {
+    // In-memory fallback - keys are not persisted, only metadata
+    if (this.useInMemory) {
+      return null; // Keys themselves are not stored in memory for security
+    }
+
     try {
       const db = await this.dbPromise;
+      if (!db) return null;
+
       return new Promise((resolve) => {
         const request = db
           .transaction(this.STORE_NAME, "readonly")
@@ -91,8 +113,15 @@ class SecureKeyStorage {
   }
 
   async storeKey(keyId: string, key: CryptoKey, metadata: EncryptionKey): Promise<void> {
+    if (this.useInMemory) {
+      // Store metadata in memory
+      this.inMemoryStore.set(keyId, metadata);
+      return;
+    }
+
     try {
       const db = await this.dbPromise;
+      if (!db) return;
       // In a real implementation, we'd properly export and store the key
       // This is a placeholder for the concept
       const transaction = db.transaction(this.STORE_NAME, "readwrite");
@@ -104,8 +133,14 @@ class SecureKeyStorage {
   }
 
   async deleteKey(keyId: string): Promise<void> {
+    if (this.useInMemory) {
+      this.inMemoryStore.delete(keyId);
+      return;
+    }
+
     try {
       const db = await this.dbPromise;
+      if (!db) return;
       const transaction = db.transaction(this.STORE_NAME, "readwrite");
       transaction.objectStore(this.STORE_NAME).delete(keyId);
     } catch {
@@ -114,8 +149,14 @@ class SecureKeyStorage {
   }
 
   async listKeys(): Promise<EncryptionKey[]> {
+    if (this.useInMemory) {
+      return Array.from(this.inMemoryStore.values());
+    }
+
     try {
       const db = await this.dbPromise;
+      if (!db) return [];
+
       return new Promise((resolve) => {
         const request = db
           .transaction(this.STORE_NAME, "readonly")
@@ -147,7 +188,13 @@ class SecureKeyStorage {
   }
 }
 
+// Initialize key storage - will use IndexedDB if available, otherwise falls back to in-memory
 const keyStorage = new SecureKeyStorage();
+
+// Check if we're in a server-side environment (where window is not available)
+function isServerEnvironment(): boolean {
+  return typeof window === "undefined";
+}
 
 // Derive a key from a password using PBKDF2
 export async function deriveKeyFromPassword(
@@ -399,6 +446,11 @@ export const keyManager = {
 
 // Check if encryption is available
 export function isEncryptionAvailable(): boolean {
+  // If we're in a server environment, encryption is not available
+  if (isServerEnvironment()) {
+    return false;
+  }
+
   return (
     typeof crypto !== "undefined" &&
     typeof crypto.subtle !== "undefined" &&
