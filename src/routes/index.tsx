@@ -91,7 +91,9 @@ function Index() {
   const [clock, setClock] = useState("");
   const [iso, setIso] = useState("");
   const [capabilities, setCapabilities] = useState("Checking...");
-  const [classification, setClassification] = useState(CLASSIFICATIONS[0]);
+  const [classification, setClassification] = useState<string>(
+    CLASSIFICATIONS[0] ?? "General Observation",
+  );
   const [observation, setObservation] = useState("");
   const [technical, setTechnical] = useState("");
   const [categories, setCategories] = useState(emptyCategories);
@@ -192,7 +194,7 @@ function Index() {
     if (!obs) return setNotice("Please describe what was directly observed.");
 
     const validation = validateIncident({ observation: obs, technical, classification });
-    if (!validation.valid) return setNotice(validation.errors[0]);
+    if (!validation.valid) return setNotice(validation.errors[0] ?? "Invalid entry.");
 
     if (obs.length > MAX_OBSERVATION || technical.length > MAX_TECHNICAL)
       return setNotice("Entry too long. Please shorten the text.");
@@ -888,7 +890,7 @@ function Index() {
               </p>
 
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {getLegalFrameworks().instruments.map((instrument, index) => (
+                {getLegalFrameworks().map((instrument, index) => (
                   <div key={index} className="border rounded-lg p-4">
                     <h3 className="font-bold text-lg">{instrument.name}</h3>
                     <p className="text-sm text-muted-foreground">{instrument.description}</p>

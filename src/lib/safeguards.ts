@@ -1144,27 +1144,28 @@ export function checkCompliance(incident: unknown): { compliant: boolean; issues
   const inc = incident as Record<string, unknown>;
 
   // Check required fields
-  if (!inc.id || typeof inc.id !== "string") {
+  if (!inc["id"] || typeof inc["id"] !== "string") {
     issues.push("Missing or invalid ID");
   }
-  if (!inc.timestamp || typeof inc.timestamp !== "string") {
+  if (!inc["timestamp"] || typeof inc["timestamp"] !== "string") {
     issues.push("Missing or invalid timestamp");
   }
-  if (!inc.observation || typeof inc.observation !== "string") {
+  if (!inc["observation"] || typeof inc["observation"] !== "string") {
     issues.push("Missing or invalid observation");
   }
-  if (!inc.classification || typeof inc.classification !== "string") {
+  if (!inc["classification"] || typeof inc["classification"] !== "string") {
     issues.push("Missing or invalid classification");
   }
 
   // Check for suspicious patterns
-  const text = `${inc.observation || ""} ${inc.technical || ""}`.toLowerCase();
+  const text = `${inc["observation"] || ""} ${inc["technical"] || ""}`.toLowerCase();
   if (text.includes("accuse") || text.includes("guilty") || text.includes("criminal")) {
     issues.push("Potential violation of presumption of innocence - avoid accusatory language");
   }
 
   // Check observation length
-  if (typeof inc.observation === "string" && inc.observation.length > 4000) {
+  const observation = inc["observation"];
+  if (typeof observation === "string" && observation.length > 4000) {
     issues.push("Observation exceeds maximum length");
   }
 

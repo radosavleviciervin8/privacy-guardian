@@ -1193,6 +1193,4 @@ export {
   getTranslations,
   getCategoryLabel,
   getClassificationLabel,
-  LanguageCode,
-  Translation,
 };

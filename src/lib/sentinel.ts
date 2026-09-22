@@ -18,8 +18,8 @@ export interface SentinelLine {
   level: SentinelLevel;
   message: string;
   at: string;
-  category?: string;
-  action?: string;
+  category?: string | undefined;
+  action?: string | undefined;
 }
 
 export interface SentinelReport {
@@ -182,6 +182,7 @@ export async function runSentinelScan(
   let quarantined = 0;
   const interferenceLogs: InterferenceLog[] = [];
   const signalPatterns = options.signalPatterns || [];
+  let suspiciousContentCount = 0;
 
   const seenIds = new Set<string>();
   let previousTime = -Infinity;
@@ -208,6 +209,7 @@ export async function runSentinelScan(
     const suspiciousContent = detectSuspiciousPatterns(`${fixed.observation} ${fixed.technical}`);
 
     if (suspiciousContent.length > 0) {
+      suspiciousContentCount += suspiciousContent.length;
       const highScore = suspiciousContent.some((s) => s.score > 0.8);
       const log: InterferenceLog = {
         id: `log-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -351,7 +353,7 @@ export async function runSentinelScan(
   let interferenceScore = 0;
   if (tampered > 0) interferenceScore += tampered * 30;
   if (suspiciousSignals.length > 0) interferenceScore += suspiciousSignals.length * 15;
-  if (suspiciousContent.length > 0) interferenceScore += suspiciousContent.length * 10;
+  if (suspiciousContentCount > 0) interferenceScore += suspiciousContentCount * 10;
   if (repaired > 0) interferenceScore += repaired * 5;
   interferenceScore = Math.min(100, interferenceScore);
 
@@ -374,7 +376,7 @@ export async function runSentinelScan(
       "Monitor signal environment. Consider professional RF sweep if suspicious activity persists.",
     );
   }
-  if (suspiciousContent.length > 0) {
+  if (suspiciousContentCount > 0) {
     recommendations.push(
       "Review flagged records for accuracy. Avoid naming individuals without independent verification.",
     );
@@ -530,7 +532,7 @@ export class SignalMonitor {
     const simulate = () => {
       if (!this.active) return;
 
-      const signalType = signalTypes[Math.floor(Math.random() * signalTypes.length)];
+      const signalType = signalTypes[Math.floor(Math.random() * signalTypes.length)] ?? "rf";
       const strength = this.generateSignalStrength(signalType);
       const anomalyScore = Math.random();
       const isSuspicious = anomalyScore > 0.7;

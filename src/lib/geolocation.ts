@@ -467,15 +467,16 @@ export class GeolocationEngine {
     let latitude = 37.0902 + (random * 10 - 5);
     let longitude = -95.7129 + (random * 20 - 10);
 
-    if (parts[0] >= 1 && parts[0] <= 126) {
+    const firstOctet = parts[0] ?? 0;
+    if (firstOctet >= 1 && firstOctet <= 126) {
       country = "US";
       countryName = "United States";
-    } else if (parts[0] >= 128 && parts[0] <= 191) {
+    } else if (firstOctet >= 128 && firstOctet <= 191) {
       country = "EU";
       countryName = "European Union";
       latitude = 48.8566 + (random * 10 - 5);
       longitude = 2.3522 + (random * 20 - 10);
-    } else if (parts[0] >= 192 && parts[0] <= 223) {
+    } else if (firstOctet >= 192 && firstOctet <= 223) {
       country = "ASIA";
       countryName = "Asia";
       latitude = 35.6762 + (random * 10 - 5);
@@ -539,7 +540,9 @@ export class GeolocationEngine {
 
   private ipToNumber(ip: string): number {
     const parts = ip.split(".").map(Number);
-    return (parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3];
+    return (
+      ((parts[0] ?? 0) << 24) | ((parts[1] ?? 0) << 16) | ((parts[2] ?? 0) << 8) | (parts[3] ?? 0)
+    );
   }
 
   private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {

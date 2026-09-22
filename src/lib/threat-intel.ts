@@ -291,7 +291,7 @@ const KNOWN_INDICATORS: ThreatIndicator[] = [
     severity: "critical",
     confidence: 98,
     categories: ["mobile", "surveillance", "cyber"],
-    relatedAnomalies: ["surveillance_pattern", "unwanted monitoring concern"],
+    relatedAnomalies: ["surveillance_pattern", "behavioral_anomaly"],
     mitigation: "Stalkerware is illegal in most jurisdictions. Preserve evidence and report",
     references: ["Stalking Laws", "GDPR Art. 5", "ECHR Art. 8"],
     firstSeen: "2024-01-05T00:00:00Z",
@@ -545,7 +545,7 @@ export class ThreatIntelEngine {
     };
 
     for (const indicator of indicators) {
-      severityCounts[indicator.severity]++;
+      severityCounts[indicator.severity] = (severityCounts[indicator.severity] ?? 0) + 1;
     }
 
     const severity =

@@ -9,26 +9,28 @@ export interface UserSession {
   userId: string;
   createdAt: string;
   lastActivity: string;
-  ipAddress?: string;
+  ipAddress?: string | undefined;
   userAgent: string;
-  location?: {
-    country?: string;
-    region?: string;
-    city?: string;
-    latitude?: number;
-    longitude?: number;
-  };
+  location?:
+    | {
+        country?: string;
+        region?: string;
+        city?: string;
+        latitude?: number;
+        longitude?: number;
+      }
+    | undefined;
   permissions: string[];
   roles: string[];
   isAuthenticated: boolean;
-  authToken?: string;
-  refreshToken?: string;
-  tokenExpires?: string;
+  authToken?: string | undefined;
+  refreshToken?: string | undefined;
+  tokenExpires?: string | undefined;
   failedAttempts: number;
-  lastFailedAttempt?: string;
+  lastFailedAttempt?: string | undefined;
   isLocked: boolean;
-  lockReason?: string;
-  lockedAt?: string;
+  lockReason?: string | undefined;
+  lockedAt?: string | undefined;
   metadata: Record<string, unknown>;
 }
 
@@ -54,12 +56,17 @@ export interface SecurityEvent {
   id: string;
   timestamp: string;
   type:
-    "login" | "logout" | "failed_login" | "rate_limit" | "suspicious_activity" | "session_expired";
-  sessionId?: string;
-  userId?: string;
-  ipAddress?: string;
-  userAgent?: string;
-  details?: string;
+    | "login"
+    | "logout"
+    | "failed_login"
+    | "rate_limit"
+    | "suspicious_activity"
+    | "session_expired";
+  sessionId?: string | undefined;
+  userId?: string | undefined;
+  ipAddress?: string | undefined;
+  userAgent?: string | undefined;
+  details?: string | undefined;
   severity: "low" | "medium" | "high" | "critical";
 }
 
@@ -101,7 +108,7 @@ export class SessionManager {
     roles: string[] = ["user"],
     ipAddress?: string,
     location?: UserSession["location"],
-  ): UserSession {
+  ): Promise<UserSession> {
     // Check rate limiting
     const rateLimitKey = ipAddress || userId;
     if (this.config.ipRateLimiting && this.isRateLimited(rateLimitKey)) {
@@ -409,7 +416,7 @@ export class SessionManager {
 
       this.logSecurityEvent({
         type: "rate_limit",
-        identifier,
+        ipAddress: identifier,
         severity: "high",
         details: `Rate limited for ${this.config.lockoutDuration} minutes`,
       });
@@ -592,7 +599,15 @@ export class SessionManager {
     }
 
     this.saveToStorage();
-    logAudit("SECURITY_EVENT", event.severity, JSON.stringify(event));
+    const auditSeverity =
+      event.severity === "critical"
+        ? "CRITICAL"
+        : event.severity === "high"
+          ? "ERROR"
+          : event.severity === "medium"
+            ? "WARNING"
+            : "INFO";
+    logAudit("CREATE", auditSeverity, JSON.stringify(event));
   }
 }
 
