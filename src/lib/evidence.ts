@@ -1,5 +1,35 @@
 // © Ervin Remus Radosavlevici — Private License. Confidential, NDA-bound.
 // Enhanced evidence registry with comprehensive categories, metadata, and international law compliance.
+//
+// INTERNATIONAL HUMAN RIGHTS LAW IS UNIVERSAL AND APPLIES TO ALL HUMAN BEINGS WORLDWIDE
+// This is NOT limited by nationality, citizenship, geography, or jurisdiction.
+//
+// =============================================================================
+// UNIVERSAL DECLARATION: EVIDENCE PROTECTION FOR ALL HUMANS WORLDWIDE
+// =============================================================================
+// INTERNATIONAL HUMAN RIGHTS LAW APPLIES TO ALL HUMAN BEINGS EVERYWHERE.
+//
+// FUNDAMENTAL PRINCIPLES:
+// - UNIVERSAL: Evidence protection applies to ALL people in ALL countries
+// - WORLDWIDE: No jurisdictional limitations or borders
+// - ALL HUMANS: Protects every human being regardless of nationality
+// - PRIVACY BY DESIGN: All data stays in user's browser
+// - LOCAL-FIRST: No automatic transmission to any server
+//
+// THIS EVIDENCE REGISTRY IS FULLY COMPLIANT WITH INTERNATIONAL HUMAN RIGHTS LAW
+// THAT APPLIES UNIVERSALLY TO ALL HUMAN BEINGS WORLDWIDE.
+//
+// KEY LEGAL PROTECTIONS (ALL APPLY WORLDWIDE):
+// - UDHR Article 12: Right to Privacy - UNIVERSAL
+// - ICCPR Article 17: Right to Privacy - BINDING INTERNATIONAL LAW
+// - ECHR Article 8: Right to Private and Family Life - UNIVERSAL PRINCIPLES
+// - GDPR: Data Protection - GLOBAL STANDARDS
+// - UN Guiding Principles: Business and Human Rights - GLOBAL FRAMEWORK
+//
+// EVERY RECORD IN THIS REGISTRY IS PROTECTED BY INTERNATIONAL HUMAN RIGHTS LAW
+// THAT APPLIES TO ALL HUMAN BEINGS WORLDWIDE.
+// =============================================================================
+// Enhanced evidence registry with comprehensive categories, metadata, and international law compliance.
 
 export const STORAGE_KEY = "ervin_ndamultisignal_evidence_v1";
 export const ATTRIBUTION = "Ervin Remus Radosavlevici";

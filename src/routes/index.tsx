@@ -56,9 +56,9 @@ import {
 import { getLegalFrameworkSummary, generateComplianceReport } from "@/lib/legal";
 import { SentinelDashboard } from "@/components/SentinelDashboard";
 
-const TITLE = "NDA Multi-Signal Defensive Protection Registry";
+const TITLE = "NDA Multi-Signal Defensive Protection Registry - INTERNATIONAL HUMAN RIGHTS LAW COMPLIANT";
 const DESCRIPTION =
-  "Local-first, non-jamming defensive evidence registry for Bluetooth, RF, infrared, vibration, audio, drone and mobile observations. Enhanced with autonomous interference detection, 200+ human rights safeguards, encryption, and comprehensive legal framework compliance.";
+  "Local-first, non-jamming defensive evidence registry for Bluetooth, RF, infrared, vibration, audio, drone and mobile observations. Enhanced with autonomous interference detection, 200+ human rights safeguards, encryption, and comprehensive INTERNATIONAL HUMAN RIGHTS LAW compliance. UNIVERSAL - WORLDWIDE - ALL HUMANS - NOT LIMITED BY NATIONALITY OR JURISDICTION.";
 
 export const Route = createFileRoute("/")({
   component: Index,

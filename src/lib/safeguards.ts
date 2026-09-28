@@ -1,6 +1,37 @@
 // © Ervin Remus Radosavlevici — Private License. Confidential, NDA-bound.
 // 200+ defensive safeguards mapped to international human-rights law principles.
 // Enhanced with comprehensive legal framework, technical protections, and ethical guidelines.
+//
+// INTERNATIONAL HUMAN RIGHTS LAW IS UNIVERSAL AND APPLIES TO ALL HUMAN BEINGS WORLDWIDE
+// This is NOT limited by nationality, citizenship, geography, or jurisdiction.
+//
+// =============================================================================
+// UNIVERSAL DECLARATION: ALL SAFEGUARDS APPLY WORLDWIDE
+// =============================================================================
+// INTERNATIONAL HUMAN RIGHTS LAW APPLIES TO ALL HUMAN BEINGS EVERYWHERE.
+//
+// FUNDAMENTAL PRINCIPLES FOR ALL SAFEGUARDS:
+// - UNIVERSAL: Every safeguard applies to ALL people in ALL countries
+// - WORLDWIDE: No jurisdictional limitations or borders
+// - ALL HUMANS: Protects every human being regardless of nationality
+// - NON-DISCRIMINATORY: No exceptions based on citizenship or location
+// - CUSTOMARY LAW: Binding on ALL states through international law
+//
+// ALL 200+ SAFEGUARDS IN THIS FILE ARE MAPPED TO INTERNATIONAL HUMAN RIGHTS LAW
+// THAT APPLIES UNIVERSALLY TO ALL HUMAN BEINGS WORLDWIDE.
+//
+// KEY LEGAL FRAMEWORKS (ALL APPLY WORLDWIDE):
+// - Universal Declaration of Human Rights (UDHR) - CUSTOMARY INTERNATIONAL LAW
+// - International Covenant on Civil and Political Rights (ICCPR) - BINDING
+// - International Covenant on Economic, Social and Cultural Rights (ICESCR) - BINDING
+// - European Convention on Human Rights (ECHR) - UNIVERSAL PRINCIPLES
+// - American Convention on Human Rights (ACHR) - UNIVERSAL PRINCIPLES
+// - African Charter on Human and Peoples' Rights (AfCHPR) - UNIVERSAL PRINCIPLES
+// - UN Guiding Principles on Business and Human Rights - GLOBAL
+// - General Data Protection Regulation (GDPR) - EUROPEAN (with global influence)
+//
+// THIS APPLICATION IMPLEMENTS 200+ DEFENSIVE SAFEGUARDS THAT PROTECT ALL HUMANS WORLDWIDE
+// =============================================================================
 
 export interface SafeguardGroup {
   id: string;
