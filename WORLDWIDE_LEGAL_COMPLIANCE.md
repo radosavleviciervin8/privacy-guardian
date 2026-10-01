@@ -1255,6 +1255,6 @@ The Humanity First Framework (HFC/2025 01 — 31) is built on a **rock-solid leg
 **Permanent Owner: Ervin Remus Radosavlevici**
 **Framework: Humanity First Framework (HFC/2025 01 — 31)**
 **Version: v1.0 - Global Compliance Framework**
-**Jurisdiction: All Sovereign Nations**
+**Jurisdiction: All All Nations**
 **Compliance: International Human Rights Law, IP Law, Contract Law, Local Laws**
 **Purpose: Comprehensive Legal Protection for Worldwide Adoption**

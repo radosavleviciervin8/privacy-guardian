@@ -365,7 +365,7 @@ All copyright and other proprietary rights in the Framework remain the **exclusi
 - **Berne Convention**: 179 member countries
 - **TRIPS Agreement**: All WTO members
 - **WIPO Treaties**: Digital and traditional copyright
-- **National Laws**: All sovereign nations
+- **National Laws**: All All nations
 
 ### 7.2 Global Moral Rights
 
@@ -763,5 +763,5 @@ The Owner may provide the following **paid support services** globally:
 **Permanent Owner: Ervin Remus Radosavlevici**
 **License: Worldwide Enterprise License v1.0 + NDA**
 **Effective Date: January 31, 2025**
-**Jurisdiction: All Sovereign Nations**
+**Jurisdiction: All All Nations**
 **Compliance: International Human Rights Law & Local Laws**

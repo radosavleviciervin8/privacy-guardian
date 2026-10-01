@@ -311,5 +311,5 @@ Every record includes:
 **Copyright © Ervin Remus Radosavlevici. All rights reserved worldwide.**
 **Permanent Owner: Ervin Remus Radosavlevici**
 **Canonical Version: HFC/2025 01 — 31 v1.0**
-**Jurisdiction: All Sovereign Nations**
+**Jurisdiction: All All Nations**
 **Compliance: International Human Rights Law & Ethics**

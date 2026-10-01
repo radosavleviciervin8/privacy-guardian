@@ -657,5 +657,5 @@ gpg --verify HFC-2025-01-31-v1.0.pdf.sig HFC-2025-01-31-v1.0.pdf
 **Framework: Humanity First Framework (HFC/2025 01 — 31)**
 **Version: v1.0 - Global Authentication System**
 **Verification: Multiple Independent Methods**
-**Jurisdiction: All Sovereign Nations**
+**Jurisdiction: All All Nations**
 **Compliance: International Human Rights Law & Local IP Laws**

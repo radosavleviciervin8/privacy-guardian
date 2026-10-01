@@ -1337,5 +1337,5 @@ For **maximum global recognition**, register on **multiple blockchains**:
 **Permanent Owner: Ervin Remus Radosavlevici**
 **Framework: Humanity First Framework (HFC/2025 01 — 31)**
 **Version: v1.0 - Global IP Registration Manual**
-**Jurisdiction: All Sovereign Nations**
+**Jurisdiction: All All Nations**
 **Compliance: International Human Rights Law & Local IP Laws**

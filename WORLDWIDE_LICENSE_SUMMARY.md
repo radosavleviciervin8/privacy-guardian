@@ -293,7 +293,7 @@ Copyright © Ervin Remus Radosavlevici. All rights reserved worldwide.
 Permanent Owner: Ervin Remus Radosavlevici
 Canonical Version: v1.0 - Worldwide Edition
 License: [Applicable Tier License]
-Jurisdiction: All Sovereign Nations
+Jurisdiction: All All Nations
 Compliance: International Human Rights Law
 ```
 
@@ -544,6 +544,6 @@ The following actions are **STRICTLY PROHIBITED** under all license tiers **in a
 **Permanent Owner: Ervin Remus Radosavlevici**
 **Framework: Humanity First Framework (HFC/2025 01 — 31)**
 **Version: v1.0 - Global Licensing Architecture**
-**Jurisdiction: All Sovereign Nations**
+**Jurisdiction: All All Nations**
 **Compliance: International Human Rights Law & Ethics**
 **Purpose: Worldwide Adoption with Permanent Authorship Protection**

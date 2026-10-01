@@ -16,7 +16,7 @@
 
 **Effective Date:** [Date of Execution]
 
-**Jurisdiction:** All Sovereign Nations Worldwide
+**Jurisdiction:** All All Nations Worldwide
 
 ---
 
@@ -512,5 +512,5 @@ The Licensee must implement and maintain the following **minimum security standa
 **Permanent Owner: Ervin Remus Radosavlevici**
 **Agreement: Worldwide Non-Disclosure Agreement v1.0**
 **Effective Date: January 31, 2025**
-**Jurisdiction: All Sovereign Nations**
+**Jurisdiction: All All Nations**
 **Compliance: International Human Rights Law & Local Confidentiality Laws**
