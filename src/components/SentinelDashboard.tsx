@@ -1,6 +1,7 @@
 // © Ervin Remus Radosavlevici — Private License. Confidential, NDA-bound.
 // Sentinel Dashboard: Real-time monitoring and interference detection for evidence registry.
 
+import { autoDefend, distributeReport, type DefenceAction } from "@/lib/defence";
 import { useEffect, useState, useCallback } from "react";
 import {
   runSentinelScan,
