@@ -72,29 +72,6 @@ export function SentinelDashboard() {
 
   // Initialize and start monitoring
 
-  const loadInitialData = useCallback(async () => {
-    const incidents = getEvidence();
-    const auditLogs = getAuditLogs();
-
-    setAuditLogs(auditLogs);
-    setStats((prev) => ({
-      ...prev,
-      totalIncidents: incidents.length,
-      auditLogs: auditLogs.length,
-    }));
-
-    // Run initial scan
-    await runScan();
-  }, [runScan]);
-
-  const startSignalMonitoring = useCallback(() => {
-    sentinelMonitor.start();
-    sentinelMonitor.onSignal((pattern) => {
-      setSignalPatterns((prev) => [...prev.slice(-49), pattern]);
-    });
-    setIsMonitoring(true);
-  }, []);
-
   const runScan = useCallback(async () => {
     try {
       const result = await runSentinelScan({
@@ -122,6 +99,30 @@ export function SentinelDashboard() {
       console.error("Sentinel scan failed:", error);
     }
   }, [signalPatterns]);
+
+  const loadInitialData = useCallback(async () => {
+    const incidents = getEvidence();
+    const auditLogs = getAuditLogs();
+
+    setAuditLogs(auditLogs);
+    setStats((prev) => ({
+      ...prev,
+      totalIncidents: incidents.length,
+      auditLogs: auditLogs.length,
+    }));
+
+    // Run initial scan
+    await runScan();
+  }, [runScan]);
+
+  const startSignalMonitoring = useCallback(() => {
+    sentinelMonitor.start();
+    sentinelMonitor.onSignal((pattern) => {
+      setSignalPatterns((prev) => [...prev.slice(-49), pattern]);
+    });
+    setIsMonitoring(true);
+  }, []);
+
 
   useEffect(() => {
     loadInitialData();
