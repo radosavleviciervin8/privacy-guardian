@@ -1,6 +1,27 @@
 # 🚨 NDA Multi-Signal Defensive Protection & Evidence Registry
 
 **Copyright © Ervin Remus Radosavlevici. All rights reserved.**
+
+---
+
+## 🌍 HUMANITY FIRST FRAMEWORK - WORLDWIDE ADOPTION
+
+### 👨‍🏫 Global Framework for Emergency Human Rights Education
+
+The **Humanity First Framework (HFC/2025 01 — 31)** is now available for **worldwide emergency adoption** with a **three-tier licensing model**:
+
+| Tier | License | Cost | Audience |
+|------|---------|------|----------|
+| **Public Education** | [PUBLIC_EDUCATION_LICENSE.md](./PUBLIC_EDUCATION_LICENSE.md) | **FREE** | Governments, Public Schools, Universities |
+| **Government/Emergency** | [GOVERNMENT_LICENSE.md](./GOVERNMENT_LICENSE.md) | **FREE** | NGOs, Emergency Programs, Ministries |
+| **Enterprise** | [ENTERPRISE_LICENSE.md](./ENTERPRISE_LICENSE.md) + [NDA.md](./NDA.md) | **Enterprise-Priced** | Private Schools, Businesses, Corporations |
+
+✅ **Permanent Authorship: Ervin Remus Radosavlevici - Unchanged, Unreplaced, Non-Rebrandable, Autonomous**
+
+See **[HUMANITY_FIRST_FRAMEWORK.md](./HUMANITY_FIRST_FRAMEWORK.md)** for complete framework documentation and **[LICENSE_SUMMARY.md](./LICENSE_SUMMARY.md)** for license comparison.
+
+---
+
 **Private License — Confidential — Subject to NDA.** See [LICENSE](./LICENSE), [NDA.md](./NDA.md), [SECURITY.md](./SECURITY.md), [ETHICS.md](./ETHICS.md), and **[INTERNATIONAL_LAW.md](./INTERNATIONAL_LAW.md)**.
 
 ---
