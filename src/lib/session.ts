@@ -619,7 +619,7 @@ export function getCurrentSession(): UserSession | undefined {
   return sessionManager.getActiveSession();
 }
 
-export function createAnonymousSession(): UserSession {
+export function createAnonymousSession(): Promise<UserSession> {
   return sessionManager.createSession(
     "anonymous",
     ["read", "write", "export"],

@@ -386,7 +386,7 @@ export function capabilityReport(): string[] {
   reports.push(`Platform: ${navigator.platform || "Unknown"}`);
   reports.push(`Online: ${navigator.onLine ? "YES" : "NO"}`);
   reports.push(`Hardware Concurrency: ${navigator.hardwareConcurrency || "Unknown"}`);
-  reports.push(`Device Memory: ${navigator.deviceMemory || "Unknown"} GB`);
+  reports.push(`Device Memory: ${(navigator as Navigator & { deviceMemory?: number }).deviceMemory || "Unknown"} GB`);
 
   return reports;
 }

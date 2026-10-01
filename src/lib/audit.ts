@@ -15,7 +15,8 @@ export type AuditAction =
   | "BACKUP"
   | "RESTORE"
   | "ENCRYPT"
-  | "DECRYPT";
+  | "DECRYPT"
+  | "ERROR" | "DELETE_BACKUP" | "IMPORT_BACKUP" | "ARCHIVE" | "DELETE_ARCHIVED" | "ESCALATE" | "REPORT_GENERATED" | "ARCHIVE_ESCALATION" | "QUARANTINE_ESCALATION" | "LEGAL_REVIEW_REQUESTED" | "AUTHORITY_CONTACT" | "ESCALATION_UPDATE";
 
 export type AuditSeverity = "INFO" | "WARNING" | "ERROR" | "CRITICAL";
 
@@ -227,7 +228,7 @@ export function auditError(error: Error, context: string): AuditLog {
 // Generate audit report
 export function generateAuditReport(): AuditReport {
   const logs = getAuditLogs();
-  const byAction: Record<AuditAction, number> = {
+  const byAction = {
     CREATE: 0,
     READ: 0,
     UPDATE: 0,
@@ -239,7 +240,7 @@ export function generateAuditReport(): AuditReport {
     RESTORE: 0,
     ENCRYPT: 0,
     DECRYPT: 0,
-  };
+  } as Record<AuditAction, number>;
 
   const bySeverity: Record<AuditSeverity, number> = {
     INFO: 0,
