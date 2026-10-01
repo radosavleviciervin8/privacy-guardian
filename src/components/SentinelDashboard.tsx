@@ -71,20 +71,6 @@ export function SentinelDashboard() {
   const [showAudit, setShowAudit] = useState(false);
 
   // Initialize and start monitoring
-  useEffect(() => {
-    loadInitialData();
-    startSignalMonitoring();
-
-    // Generate compliance report
-    const report = generateComplianceReport(
-      "NDA Multi-Signal Defensive Protection & Evidence Registry",
-    );
-    setComplianceChecks(report);
-
-    return () => {
-      sentinelMonitor.stop();
-    };
-  }, [loadInitialData, startSignalMonitoring]);
 
   const loadInitialData = useCallback(async () => {
     const incidents = getEvidence();
@@ -136,6 +122,21 @@ export function SentinelDashboard() {
       console.error("Sentinel scan failed:", error);
     }
   }, [signalPatterns]);
+
+  useEffect(() => {
+    loadInitialData();
+    startSignalMonitoring();
+
+    // Generate compliance report
+    const report = generateComplianceReport(
+      "NDA Multi-Signal Defensive Protection & Evidence Registry",
+    );
+    setComplianceChecks(report);
+
+    return () => {
+      sentinelMonitor.stop();
+    };
+  }, [loadInitialData, startSignalMonitoring]);
 
   const toggleMonitoring = useCallback(() => {
     if (isMonitoring) {
