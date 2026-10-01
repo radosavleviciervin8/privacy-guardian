@@ -1,6 +1,7 @@
 // © Ervin Remus Radosavlevici — Private License. Confidential, NDA-bound.
 // Sentinel Dashboard: Real-time monitoring and interference detection for evidence registry.
 
+import { autoDefend, distributeReport, type DefenceAction } from "@/lib/defence";
 import { useEffect, useState, useCallback } from "react";
 import {
   runSentinelScan,
@@ -65,6 +66,7 @@ export function SentinelDashboard() {
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
   const [complianceChecks, setComplianceChecks] = useState<ComplianceCheck[]>([]);
   const [isMonitoring, setIsMonitoring] = useState(false);
+  const [defenceActions, setDefenceActions] = useState<DefenceAction[]>([]);
   const [showDetails, setShowDetails] = useState<string | null>(null);
   const [showLegal, setShowLegal] = useState(false);
   const [showCompliance, setShowCompliance] = useState(false);
@@ -81,6 +83,8 @@ export function SentinelDashboard() {
 
       setReport(result.report);
       setInterferenceLogs(result.interferenceLogs);
+      const acts = await autoDefend(result.report);
+      setDefenceActions((p) => [...acts, ...p].slice(0, 20));
 
       const incidents = result.incidents;
       const quarantined = incidents.filter((i) => i.classification.includes("[QUARANTINED]"));
@@ -224,7 +228,37 @@ export function SentinelDashboard() {
           <button className="btn" onClick={runScan}>
             Run Scan
           </button>
+          <button
+            className="btn btn-primary"
+            disabled={!report}
+            onClick={async () => {
+              if (!report) return;
+              const msg = await distributeReport(report);
+              setDefenceActions((p) => [{ at: new Date().toISOString(), action: msg }, ...p].slice(0, 20));
+            }}
+          >
+            Distribute Report
+          </button>
         </div>
+      </div>
+
+      <div className="panel">
+        <h3 className="font-bold">Autonomous Defence — active</h3>
+        <p className="text-sm opacity-80">
+          After every scan: blocks deletion by restoring missing records from a sealed vault, quarantines altered
+          records, and refreshes the sealed backup. Lawful only — it never jams, transmits or interferes with any device.
+        </p>
+        <ul className="mt-2 space-y-1 text-sm">
+          {defenceActions.length === 0 ? (
+            <li className="opacity-60">No actions yet.</li>
+          ) : (
+            defenceActions.map((a, i) => (
+              <li key={i} className="log-item">
+                <span className="opacity-60">{a.at.slice(11, 19)}</span> {a.action}
+              </li>
+            ))
+          )}
+        </ul>
       </div>
 
       {/* Stats Overview */}
