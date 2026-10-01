@@ -228,7 +228,7 @@ export function auditError(error: Error, context: string): AuditLog {
 // Generate audit report
 export function generateAuditReport(): AuditReport {
   const logs = getAuditLogs();
-  const byAction: Record<AuditAction, number> = {
+  const byAction = {
     CREATE: 0,
     READ: 0,
     UPDATE: 0,
@@ -240,7 +240,7 @@ export function generateAuditReport(): AuditReport {
     RESTORE: 0,
     ENCRYPT: 0,
     DECRYPT: 0,
-  };
+  } as Record<AuditAction, number>;
 
   const bySeverity: Record<AuditSeverity, number> = {
     INFO: 0,
