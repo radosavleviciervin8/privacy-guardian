@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, useCallback } from "react";
 import {
   ATTRIBUTION,
@@ -383,6 +383,7 @@ function Index() {
               <div className="flex gap-2">
                 <span className="badge tone-green">DEFENSIVE / LOCAL / NON-JAMMING</span>
                 <span className="badge tone-blue">200+ SAFEGUARDS ACTIVE</span>
+                <Link to="/trade" className="badge tone-yellow">🌍 UN TRADE DATA</Link>
               </div>
             </div>
             <div className="hidden md:block">
